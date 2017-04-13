@@ -2,13 +2,23 @@ package graph;
 
 import java.util.Iterator;
 
+/**
+ * Iterator for DanglingList.
+ * @author imelcken
+ *
+ * @param <E>
+ */
 public class DanglingIterator<E extends Comparable<E>> implements Iterator<E> {
 	
 	private DanglingElement<E> current;
-	private DanglingList<E> dl;
+//	private DanglingList<E> dl;
 	
+	/**
+	 * Creates a new iterator for the given list.
+	 * @param dl
+	 */
 	public DanglingIterator(DanglingList<E> dl){
-		this.dl = dl;
+//		this.dl = dl;
 		current=dl.getHead();
 	}
 
@@ -28,14 +38,4 @@ public class DanglingIterator<E extends Comparable<E>> implements Iterator<E> {
 		return value;
 	}
 	
-	public static void main(String[]args){
-		DanglingList<Integer> a = new DanglingList<>();
-		for(int i=0;i<10;i++){
-			a.add(i);
-		}
-		for(int i:a){
-			System.out.println(i);
-		}
-	}
-
 }

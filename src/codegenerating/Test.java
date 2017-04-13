@@ -45,7 +45,7 @@ public class Test {
 		OrbitIdentification.readGraphlets("Przulj.txt", 7);
 		OrbitTree ot7 = new OrbitTree(7);
 		OrbitTree ot6 = new OrbitTree(6);
-		DanglingGraph dg=new DanglingGraph(0,0);
+		DanglingGraph dg=null;
 //		PrintWriter writer = null ;
 		try {
 //			writer = new PrintWriter("speedDifference"+order+".txt", "UTF-8");
@@ -60,14 +60,14 @@ public class Test {
 				// int n = 100;
 				// int m = 2413;
 				System.out.println(n + "," + m);
-				dg = new DanglingGraph(n, m);
+				dg = GraphReader.ErdosRenyi(n, m);
 				long start = System.nanoTime();
 				CountingInterpreter ci = new CountingInterpreter(dg, 7, ot7);
 				long[][] result1 = ci.run();
 				long stop = System.nanoTime() - start;
 				start = System.nanoTime();
 				dg.calculateCommons(5);
-				DanglingInterpreter di = new DanglingInterpreter(dg, 6, ot6);
+				DanglingInterpreter di = new DanglingInterpreter(dg, ot6);
 				long[][]result2 = di.run();
 				System.out.println(count(result2,7));
 				if(! Arrays.deepEquals(result1, result2)){
@@ -101,7 +101,7 @@ public class Test {
 		OrbitTree tree;
 		tree = new OrbitTree(order - 1);
 		// tree.getRoot().printTree("");
-		DanglingInterpreter di = new DanglingInterpreter(g, order - 1, tree);
+		DanglingInterpreter di = new DanglingInterpreter(g, tree);
 		System.out.print((System.nanoTime() - start) * 1e-9 + "\t");
 		start = System.nanoTime();
 		long[][] result = di.run();
@@ -134,7 +134,7 @@ public class Test {
 	public static void speeddifference(int order, int times) {
 		Random r = new Random();
 		OrbitIdentification.readGraphlets("Przulj.txt", order);
-		DanglingGraph dg=new DanglingGraph(0,0);
+		DanglingGraph dg=null;
 		FileWriter writer = null ;
 		try {
 			writer = new FileWriter("speedDifference"+order+".txt",true);
@@ -148,14 +148,14 @@ public class Test {
 				// int n = 100;
 				// int m = 2413;
 				System.out.println(n + "," + m);
-				dg = new DanglingGraph(n, m);
+				dg = GraphReader.ErdosRenyi(n, m);
 				long start = System.nanoTime();
 				CountingInterpreter ci = new CountingInterpreter(dg, order, new OrbitTree(order));
 				long[][] result = ci.run();
 				long stop = System.nanoTime() - start;
 				start = System.nanoTime();
 				dg.calculateCommons(order - 2);
-				DanglingInterpreter di = new DanglingInterpreter(dg, order - 1, new OrbitTree(order - 1));
+				DanglingInterpreter di = new DanglingInterpreter(dg, new OrbitTree(order - 1));
 				result = di.run();
 
 //				writer.print(count(result, order));
@@ -191,7 +191,7 @@ public class Test {
 		PrintWriter writer = new PrintWriter("compare"+ graphorder+"-"+graphsize+".txt", "UTF-8");
 		for (int j = 0; j < 20; j++) {
 			// {
-			DanglingGraph g = new DanglingGraph(graphorder, graphsize);
+			DanglingGraph g = GraphReader.ErdosRenyi(graphorder,graphsize);
 			start = System.nanoTime();
 			g.calculateCommons(order - 2);
 			writer.print((System.nanoTime() - start) * 1e-9 + "\t");
@@ -199,7 +199,7 @@ public class Test {
 			start = System.nanoTime();
 			OrbitTree tree;
 			tree = new OrbitTree(order - 1);
-			DanglingInterpreter di = new DanglingInterpreter(g, order - 1, tree);
+			DanglingInterpreter di = new DanglingInterpreter(g, tree);
 			writer.print((System.nanoTime() - start) * 1e-9 + "\t");
 			start = System.nanoTime();
 			long[][] result = di.run();

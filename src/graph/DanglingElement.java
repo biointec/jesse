@@ -1,7 +1,7 @@
 package graph;
 
 /**
- * Element in a DanglingList.
+ * Element in a DanglingList. 
  * 
  * @author Ine Melckenbeeck
  *

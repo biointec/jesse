@@ -110,7 +110,7 @@ public class UI {
 		start = System.nanoTime();
 		g.calculateCommons(order - 2);
 		System.out.println("Calculated common neighbours in " + +(System.nanoTime() - start) * 1e-9 + "s");
-		DanglingInterpreter di = new DanglingInterpreter(g, order-1, tree);
+		DanglingInterpreter di = new DanglingInterpreter(g,  tree);
 		System.out.println("Counting orbits...");
 		start = System.nanoTime();
 		long[][] result = di.run();

@@ -1,6 +1,5 @@
 package graph;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -10,10 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Scanner;
-import java.util.SortedMap;
 import java.util.Stack;
-import java.util.TreeMap;
 
 /**
  * Class that represents a graph using DanglingLists. For each node, a sorted
@@ -34,11 +30,14 @@ public class DanglingGraph {
 	// private List<Map<DanglingList<Integer>,Integer>> commonsBySize;
 	private long[] sizes;
 	private boolean[][] matrix;
-	private int size;
+	//private int size;
 
+	/**
+	 * Creates a new DanglingGraph, without any nodes or edges.
+	 */
 	public DanglingGraph() {
 		sizes = new long[0];
-		size = 0;
+		//size = 0;
 		nodeNames = new ArrayList<String>(0);
 		nodes = new ArrayList<DanglingList<Integer>>();
 		inverseNodeNames = new HashMap<String, Integer>();
@@ -46,6 +45,10 @@ public class DanglingGraph {
 		nCommon = null;
 	}
 
+	/**
+	 * Adds a new node to the DanglingGraph.
+	 * @param name The node's name.
+	 */
 	public void addNode(String name) {
 		if (!nodeNames.contains(name)) {
 			inverseNodeNames.put(name, nodes.size());
@@ -54,6 +57,11 @@ public class DanglingGraph {
 		}
 	}
 
+	/**
+	 * Adds a new edge to the DanglingGraph between the two given nodes, specified by name. If either node is not in the graph, it is added to the graph as well. 
+	 * @param node1 Name of first node
+	 * @param node2 Name of second node
+	 */
 	public void addEdge(String node1, String node2) {
 		int n1;
 		try {
@@ -69,10 +77,23 @@ public class DanglingGraph {
 			n2 = nodes.size();
 			addNode(node2);
 		}
+		addEdge(n1,n2);
+	}
+	
+	/**
+	 * Adds a new edge to the graph, between the two nodes specified by the given indices. Throws a NullPointerException if these indices are greater than the number of nodes in the graph.
+	 * @param n1 Index of first node.
+	 * @param n2 Index of second node.
+	 */
+	public void addEdge(int n1, int n2){
+
 		nodes.get(n1).addInOrder(n2);
 		nodes.get(n2).addInOrder(n1);
 	}
 
+	/**
+	 * Creates the matrix representation of this graph, to allow for easier lookup of adjacency. Should be executed after every
+	 */
 	public void finalise() {
 		// System.out.println(nodes);
 		matrix = new boolean[nodes.size()][];
@@ -101,48 +122,20 @@ public class DanglingGraph {
 		g.printMatrix();
 	}
 
+	/**
+	 * Prints this graph's matrix representation to the console.
+	 */
 	public void printMatrix() {
 		for (boolean[] a : matrix) {
 			System.out.println(Arrays.toString(a));
 		}
 	}
 
-	public DanglingGraph(int nNodes, int nEdges) {
-		Random r = new Random();
-		matrix = new boolean[nNodes][];
-		nodes = new ArrayList<DanglingList<Integer>>();
-		nodeNames = new ArrayList<String>();
-		sizes = new long[0];
-		size = nEdges;
-		nCommon = new HashMap<Integer, Integer>();
-		for (int i = 0; i < nNodes; i++) {
-			matrix[i] = new boolean[i];
-			nodes.add(new DanglingList<Integer>());
-			nodeNames.add("" + i);
-		}
-		int maxEdges = (nNodes * (nNodes - 1)) / 2;
-		List<Integer> l = new ArrayList<>(maxEdges);
-		for (int i = 0; i < maxEdges; i++) {
-			l.add(i);
-		}
-		for (int i = 0; i < nEdges; i++) {
-			int n = r.nextInt(l.size());
-			int f = l.remove(n);
-			// System.out.println(f);
-			int x = (int) Math.floor(.5 + Math.sqrt(1. + 8 * f) / 2.);
-			int y = f - (x * (x - 1)) / 2;
-			// System.out.println(x+","+y);
-			matrix[x][y] = true;
-			nodes.get(x).addInOrder(y);
-			nodes.get(y).addInOrder(x);
-		}
+	
 
-		DanglingList.setFactor(order());
-	}
-
-	public int size() {
-		return size;
-	}
+	//public int size() {
+	//	return size;
+	//}
 
 	private static long combination(int n, int m) {
 		long result = 1;

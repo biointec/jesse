@@ -25,6 +25,11 @@ import tree.ConditionNode;
 import tree.OrbitTree;
 import tree.TreeNode;
 
+/**
+ * TreeInterpreter which counts the orbits in a graph using both an orbit tree and equations. 
+ * @author Ine Melckenbeeck
+ *
+ */
 public class DanglingInterpreter implements TreeInterpreter {
 
 	private Deque<TreeNode> nodes;
@@ -38,8 +43,15 @@ public class DanglingInterpreter implements TreeInterpreter {
 	private List<List<Integer>> mingraphlet;
 	private List<List<Integer>> minus;
 
-	public DanglingInterpreter(DanglingGraph g, int size, OrbitTree ot) {
+	/**
+	 * Creates a new DanglingInterpreter for the given graph, graphlet size and OrbitTree.
+	 * @param g The graph in which the orbits are counted.
+	 * @param size The size of graphlets whose orbits are counted.
+	 * @param ot The orbit tree for counting.
+	 */
+	public DanglingInterpreter(DanglingGraph g, OrbitTree ot) {
 		this.g = g;
+		int size = ot.getOrder();
 		graphlet = new int[size];
 		counts = new long[OrbitIdentification.getNOrbitsTotal(size + 1)];
 		order = size;
@@ -49,6 +61,7 @@ public class DanglingInterpreter implements TreeInterpreter {
 		preprocessEquations();
 	}
 
+	
 	private void reset() {
 		graphlet = new int[order];
 		counts = new long[OrbitIdentification.getNOrbitsTotal(order + 1)];
@@ -215,6 +228,7 @@ public class DanglingInterpreter implements TreeInterpreter {
 		}
 	}
 
+	
 	public void write(String filename, long[][] result) {
 		try {
 			PrintWriter ps = new PrintWriter(new BufferedWriter(new FileWriter(filename)));

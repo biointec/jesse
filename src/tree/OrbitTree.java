@@ -306,5 +306,9 @@ public class OrbitTree {
 	public void print(){
 		root.printTree("");
 	}
+	
+	public int getOrder(){
+		return order;
+	}
 
 }
