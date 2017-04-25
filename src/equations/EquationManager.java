@@ -35,14 +35,9 @@ public class EquationManager {
 	 * 
 	 * @param e
 	 */
-	public void addEquation(Equation e) {
-//		System.out.println(e);
-//		System.out.println(OrbitIdentification.totalPerSize);
-//		System.out.println(size);
+	void addEquation(Equation e) {
 		int i = e.getLowestOrbit()
 				- OrbitIdentification.getNOrbitsTotal(size - 1);
-//		System.out.println(e.getLowestOrbit());
-//		System.out.println(i);
 		if (equ[i] == null) {
 			equ[i] = e;
 			rhsOrbits.add(e.getRhsOrbit());
@@ -86,7 +81,7 @@ public class EquationManager {
 		return result;
 	}
 	
-	public void sortEquations(){
+	void sortEquations(){
 		for(int i=0;i<equ.length;i++){
 			Equation e = equ[i];
 			OrbitRepresentative n = e.getRhsOrbit();
@@ -96,7 +91,6 @@ public class EquationManager {
 			}
 			equationsByRhs.get(n).add(e);
 		}
-//		System.out.println(equationsByRhs);
 	}
 
 	public SortedMap<OrbitRepresentative, List<Equation>> getEquationsByRhs() {
@@ -106,42 +100,6 @@ public class EquationManager {
 	public List<Equation> getEquationsByRHS(OrbitRepresentative or){
 		return equationsByRhs.get(or);
 	}
-	
-//	public static void main (String [] args){
-//		OrbitIdentification.readGraphlets("Przulj.txt");
-//		System.out.println(EquationGenerator.generateEquations(3));
-//	}
-	
-//	public void export(String filename){
-//		PrintWriter pw;
-//		try {
-//			pw = new PrintWriter(new BufferedWriter(new FileWriter("equations-"+size+".txt")));
-//			for(Equation eq:equ){
-//				pw.println(eq.export());
-//			}
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//	}
-	
-//	public static EquationManager importFile(String filename){
-//		File file = new File(filename);
-//		try {
-//			Scanner scanner = new Scanner(file);
-//			while (scanner.hasNextLine()) {
-//				// System.out.println(counter);
-//				String s = scanner.nextLine();
-//				
-//			}
-//			scanner.close();
-//			
-//		} catch (FileNotFoundException e) {
-//			System.out.println("Ongeldige bestandsnaam");
-//		}
-//
-//	}
 	
 	
 }

@@ -102,6 +102,7 @@ public class DanglingElement<E extends Comparable<E>> {
 		return true;
 	}
 
+	
 	DanglingList<E> getList() {
 		return list;
 	}

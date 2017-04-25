@@ -24,8 +24,15 @@ public abstract class AddNode extends TreeNode {
 	 * @param tree
 	 *            This AddNode's tree.
 	 */
-	public AddNode(TreeNode parent, OrbitRepresentative rep, OrbitTree tree) {
-		super(parent, tree);
+	AddNode(TreeNode parent, OrbitRepresentative rep) {
+		super(parent);
+
+		this.rep = rep;
+		repID = rep.identify();
+	}
+	
+	AddNode(OrbitRepresentative rep, OrbitTree tree){
+		super(tree);
 
 		this.rep = rep;
 		repID = rep.identify();

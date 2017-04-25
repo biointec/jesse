@@ -33,13 +33,13 @@ public class AddEdgeNode extends AddNode implements Comparable<AddEdgeNode> {
 	 * @param tree
 	 *            This AddEdgeNode's tree.
 	 */
-	public AddEdgeNode(OrbitRepresentative rep, TreeNode parent, int edge, OrbitTree tree) {
-		super(parent, rep, tree);
+	AddEdgeNode(OrbitRepresentative rep, TreeNode parent, int edge) {
+		super(parent, rep);
 		this.edge = edge;
 	}
 
 	@Override
-	public void printTree(String s) {
+	void printTree(String s) {
 		System.out.println(s + this);
 		if (truechild != null)
 			truechild.printTree(s + " ");
@@ -66,7 +66,7 @@ public class AddEdgeNode extends AddNode implements Comparable<AddEdgeNode> {
 	 *            true if the added node is this AddEdgeNode's child with the
 	 *            edge present, false with the edge absent.
 	 */
-	public void addChild(TreeNode n, boolean edge) {
+	void addChild(TreeNode n, boolean edge) {
 		if (edge) {
 			truechild = n;
 		} else {
@@ -98,12 +98,12 @@ public class AddEdgeNode extends AddNode implements Comparable<AddEdgeNode> {
 		return true;
 	}
 
-	public void setEdge(int edge) {
+	void setEdge(int edge) {
 		this.edge = edge;
 	}
 
 	@Override
-	public void removeChild(TreeNode t) {
+	void removeChild(TreeNode t) {
 		if (t.equals(truechild))
 			truechild = null;
 		if (t.equals(falsechild))
@@ -127,7 +127,7 @@ public class AddEdgeNode extends AddNode implements Comparable<AddEdgeNode> {
 	}
 
 	@Override
-	public void replaceChild(TreeNode tn, TreeNode newNode) {
+	void replaceChild(TreeNode tn, TreeNode newNode) {
 		if (tn.equals(truechild)) {
 			truechild = newNode;
 			newNode.setParent(this);
@@ -164,7 +164,7 @@ public class AddEdgeNode extends AddNode implements Comparable<AddEdgeNode> {
 		tree.getInterpreter().addEdgeAction(this);
 	}
 
-	public StringBuffer write(){
+	StringBuffer write(){
 		StringBuffer result = new StringBuffer();
 		
 		result.append("e ");
@@ -186,7 +186,7 @@ public class AddEdgeNode extends AddNode implements Comparable<AddEdgeNode> {
 		return result;
 	}
 	
-	public void prune(){
+	void prune(){
 		if(truechild == null&&falsechild == null){
 			remove();
 			parent.prune();

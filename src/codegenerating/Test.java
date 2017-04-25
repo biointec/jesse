@@ -24,7 +24,7 @@ public class Test {
 		// UI.run(false, 5, "Przulj.txt", true, false, "whatever",
 		// "example.out", "result2.txt");
 //		while(true)
-		speeddifference(6, 100);
+//		speeddifference(6, 100);
 //		
 //		for (int i = 500; i < 2001; i += 100) {
 //			System.out.println(i);
@@ -36,7 +36,7 @@ public class Test {
 //		 test("example.out",6);
 		
 //		speeddifference(7,100);
-		// compare(6,200,2500);
+		 compare(5,50,200);
 //		test7();
 	}
 

@@ -28,13 +28,18 @@ public class AddNodeNode extends AddNode implements Comparable<AddNodeNode> {
 	 * @param tree
 	 *            This AddNodeNodes's OrbitTree.
 	 */
-	public AddNodeNode(OrbitRepresentative rep, TreeNode parent, OrbitTree tree) {
-		super(parent, rep, tree);
+	AddNodeNode(OrbitRepresentative rep, TreeNode parent) {
+		super(parent, rep);
 		children = new TreeMap<Integer, TreeNode>();
+	}
+	
+	AddNodeNode(OrbitRepresentative rep, OrbitTree ot){
+		super(rep, ot);
+		children = new TreeMap<Integer,TreeNode>();
 	}
 
 	@Override
-	public void printTree(String s) {
+	void printTree(String s) {
 		System.out.println(s + "AddNodeNode " + rep + (children.isEmpty() ? "!" : ""));
 		for (TreeNode tn : children.values()) {
 			tn.printTree(s + " ");
@@ -63,7 +68,7 @@ public class AddNodeNode extends AddNode implements Comparable<AddNodeNode> {
 	 * @param n
 	 *            The new child TreeNode.
 	 */
-	public void addChild(int edge, TreeNode n) {
+	void addChild(int edge, TreeNode n) {
 		children.put(edge, n);
 	}
 
@@ -78,7 +83,7 @@ public class AddNodeNode extends AddNode implements Comparable<AddNodeNode> {
 	}
 
 	@Override
-	public void removeChild(TreeNode t) {
+	void removeChild(TreeNode t) {
 		for (int i = 0; i < rep.order(); i++) {
 			if (t.equals(children.get(i))) {
 				children.remove(i);
@@ -97,7 +102,7 @@ public class AddNodeNode extends AddNode implements Comparable<AddNodeNode> {
 	}
 
 	@Override
-	public void replaceChild(TreeNode tn, TreeNode newNode) {
+	void replaceChild(TreeNode tn, TreeNode newNode) {
 		for (int i = 0; i < rep.order(); i++) {
 			if (tn.equals(children.get(i))) {
 				children.put(i, newNode);
@@ -116,7 +121,7 @@ public class AddNodeNode extends AddNode implements Comparable<AddNodeNode> {
 	}
 
 	@Override
-	public void updateDepth() {
+	void updateDepth() {
 		if (parent != null) {
 			depth = parent.getDepth() + 1;
 		}
@@ -125,7 +130,7 @@ public class AddNodeNode extends AddNode implements Comparable<AddNodeNode> {
 		}
 	}
 	
-	public StringBuffer write(){
+	StringBuffer write(){
 		StringBuffer result = new StringBuffer();
 		
 		result.append("n");

@@ -10,8 +10,8 @@ import tree.OrbitTree;
 import tree.TreeNode;
 
 /**
- * This class counts the orbits touching each node in a DanglingGraph directly,
- * using an OrbitTree.
+ * This class counts the orbits of all graphlets up to a given order touching each node in a DanglingGraph directly,
+ * using an OrbitTree of the same order.
  * 
  * @author Ine Melckenbeeck
  *
@@ -26,21 +26,21 @@ public class CountingInterpreter implements TreeInterpreter {
 
 	/**
 	 * Creates a new CountingInterpreter which will count the orbits of
-	 * graphlets of the given size in the given DanglingGraph, using the given
+	 * graphlets of the given order in the given DanglingGraph, using the given
 	 * OrbitTree.
 	 * 
 	 * @param g
 	 *            The DanglingGraph in which the orbits will be counted.
-	 * @param size
-	 *            The size of graphlets for which the orbits will be counted.
+	 * @param order
+	 *            The order of graphlets for which the orbits will be counted.
 	 * @param ot
 	 *            The used OrbitTree.
 	 */
-	public CountingInterpreter(DanglingGraph g, int size, OrbitTree ot) {
+	public CountingInterpreter(DanglingGraph g, int order, OrbitTree ot) {
 		this.g = g;
-		graphlet = new int[size];
-		counts = new long[OrbitIdentification.getNOrbitsTotal(size)];
-		order = size;
+		graphlet = new int[order];
+		counts = new long[OrbitIdentification.getNOrbitsTotal(order)];
+		this.order = order;
 		this.ot = ot;
 	}
 
@@ -54,7 +54,7 @@ public class CountingInterpreter implements TreeInterpreter {
 
 	@Override
 	/**
-	 * Counts this node's orbit, then activates the walkTree method of all its
+	 * Counts the current tree node's orbit, then activates the walkTree method of all its
 	 * children with all possible nodes in the DanglingGraph.
 	 */
 	public void addNodeAction(AddNodeNode ann) {
@@ -83,7 +83,7 @@ public class CountingInterpreter implements TreeInterpreter {
 	@Override
 	/**
 	 * Checks whether the node that was last added to the graphlet is connected
-	 * to the end node in the AddEdgeNode, then activates the walkTree method of
+	 * to the end node in the current AddEdgeNode, then activates the walkTree method of
 	 * the appropriate child of the AddEdgeNode.
 	 */
 	public void addEdgeAction(AddEdgeNode aen) {

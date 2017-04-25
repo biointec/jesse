@@ -23,33 +23,29 @@ public class ConditionNode extends TreeNode {
 	 * @param second
 	 * @param tree
 	 */
-	public ConditionNode(TreeNode parent, int first, int second, OrbitTree tree) {
-		super(parent, tree);
-		// if (first < second) {
+	ConditionNode(TreeNode parent, int first, int second) {
+		super(parent);
 		this.first = first;
 		this.second = second;
-		// } else {
-		// this.first = second;
-		// this.second = first;
-		// }
 	}
 
 	@Override
-	public void printTree(String s) {
+	void printTree(String s) {
 		System.out.println(s + "ConditionNode " + first + "<" + second);
 		if (child != null)
 			child.printTree(s + " ");
 	}
 
 	@Override
-	public void removeChild(TreeNode t) {
+	void removeChild(TreeNode t) {
 		if (t.equals(child)) {
 			child = null;
 		}
 	}
 
 	@Override
-	public boolean isLeaf() {
+	public
+	boolean isLeaf() {
 		return child == null;
 	}
 
@@ -62,7 +58,7 @@ public class ConditionNode extends TreeNode {
 	}
 
 	@Override
-	public void replaceChild(TreeNode original, TreeNode newNode) {
+	void replaceChild(TreeNode original, TreeNode newNode) {
 		if (original.equals(child)) {
 			child = newNode;
 			newNode.setParent(this);
@@ -79,7 +75,7 @@ public class ConditionNode extends TreeNode {
 	 *            The TreeNode in whose place this ConditionNode will be
 	 *            inserted.
 	 */
-	public void insert(TreeNode tn) {
+	void insert(TreeNode tn) {
 		if (tn.getParent() != null) {
 			this.parent = tn.parent;
 			tn.parent.replaceChild(tn, this);
@@ -148,7 +144,7 @@ public class ConditionNode extends TreeNode {
 		return child;
 	}
 
-	public StringBuffer write() {
+	StringBuffer write() {
 		StringBuffer result = new StringBuffer();
 
 		result.append("c");
@@ -165,30 +161,30 @@ public class ConditionNode extends TreeNode {
 		return result;
 	}
 
-	public void setChild(TreeNode child) {
+	void setChild(TreeNode child) {
 		this.child = child;
 	}
 
-	public static void simplify(List<ConditionNode> conditions) {
-		if (conditions.size() > 2)
-			for (int i = 0; i < conditions.size(); i++) {
-				for (int j = 0; j < conditions.size(); j++) {
-					for (int k = 0; k < conditions.size(); k++) {
-						if (conditions.get(i).getSecond() == conditions.get(j).getFirst()
-								&& conditions.get(i).getFirst() == conditions.get(k).getFirst()
-								&& conditions.get(j).getSecond() == conditions.get(k).getSecond()) {
-							conditions.remove(k);
-							k--;
-							if (i > k) {
-								i--;
-							}
-							if (j > k) {
-								j--;
-							}
-						}
-					}
-				}
-			}
-	}
+//	private static void simplify(List<ConditionNode> conditions) {
+//		if (conditions.size() > 2)
+//			for (int i = 0; i < conditions.size(); i++) {
+//				for (int j = 0; j < conditions.size(); j++) {
+//					for (int k = 0; k < conditions.size(); k++) {
+//						if (conditions.get(i).getSecond() == conditions.get(j).getFirst()
+//								&& conditions.get(i).getFirst() == conditions.get(k).getFirst()
+//								&& conditions.get(j).getSecond() == conditions.get(k).getSecond()) {
+//							conditions.remove(k);
+//							k--;
+//							if (i > k) {
+//								i--;
+//							}
+//							if (j > k) {
+//								j--;
+//							}
+//						}
+//					}
+//				}
+//			}
+//	}
 
 }

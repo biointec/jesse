@@ -18,7 +18,7 @@ public class Equation {
 	 * Creates a new, empty equation. All factors left-hand and right-hand side
 	 * are 0, all graphlets are null;
 	 */
-	public Equation() {
+	Equation() {
 		lhs = new TreeMap<OrbitRepresentative, Integer>();
 		rhsOrbit = null;
 		rhsConnected = new ArrayList<List<Integer>>();
@@ -26,7 +26,7 @@ public class Equation {
 	}
 	
 
-	public Equation(SortedMap<OrbitRepresentative, Integer> lhs, OrbitRepresentative rhsOrbit,
+	Equation(SortedMap<OrbitRepresentative, Integer> lhs, OrbitRepresentative rhsOrbit,
 			List<List<Integer>> rhsConnected, int minus) {
 		super();
 		this.lhs = lhs;
@@ -57,7 +57,7 @@ public class Equation {
 	 *            OrbitGraphlet of which the common neighbours must be
 	 *            calculated.
 	 */
-	public Equation(List<OrbitRepresentative> lhsGraphlets,
+	Equation(List<OrbitRepresentative> lhsGraphlets,
 			List<Integer> lhsCounts, OrbitRepresentative rhsGraphlet,
 			List<Integer> connected) {
 		this();
@@ -80,7 +80,7 @@ public class Equation {
 	 *            equation.
 	 * @return True if the equations can be merged, false if they cannot.
 	 */
-	public boolean isCompatible(Equation e) {
+	boolean isCompatible(Equation e) {
 		return (lhs.keySet().equals(e.lhs.keySet()) && rhsOrbit
 				.equals(e.rhsOrbit));
 	}
@@ -94,7 +94,7 @@ public class Equation {
 	 * @param e
 	 *            The equation to be merged into this one.
 	 */
-	public void merge(Equation e) {
+	void merge(Equation e) {
 		assert (isCompatible(e));
 		this.rhsConnected.addAll(e.rhsConnected);
 		boolean b = false;

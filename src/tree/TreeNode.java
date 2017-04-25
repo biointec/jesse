@@ -18,21 +18,25 @@ public abstract class TreeNode {
 	 * @param parent This node's parent node. This will be null for a root node.
 	 * @param tree The tree in which this node is placed.
 	 */
-	public TreeNode(TreeNode parent, OrbitTree tree) {
+	TreeNode(TreeNode parent) {
 		this.parent = parent;
-		this.tree = tree;
+		this.tree = parent.tree;
+	}
+	
+	TreeNode(OrbitTree tree){
+		this.tree=tree;
 	}
 
 	/**
 	 * Removes a TreeNode from this node's children. If it is not a child of this node, nothing is changed.
 	 * @param child The TreeNode to be removed.
 	 */
-	public abstract void removeChild(TreeNode child);
+	abstract void removeChild(TreeNode child);
 
 	/**
 	 * Removes this TreeNode from its parent's children.
 	 */
-	public void remove() {
+	void remove() {
 		if (parent != null)
 			parent.removeChild(this);
 	}
@@ -49,7 +53,7 @@ public abstract class TreeNode {
 	 * Changes this TreeNode's parent to the given TreeNode.
 	 * @param parent This node's new parent.
 	 */
-	public void setParent(TreeNode parent) {
+	void setParent(TreeNode parent) {
 		this.parent = parent;
 	}
 
@@ -78,12 +82,12 @@ public abstract class TreeNode {
 	 * @param originalNode The node to be replaced.
 	 * @param newNode The node to replace it with.
 	 */
-	public abstract void replaceChild(TreeNode originalNode, TreeNode newNode);
+	abstract void replaceChild(TreeNode originalNode, TreeNode newNode);
 
 	/**
 	 * Updates the node's depth, then recursively calls this method for all its children. This method sets each node's depth as equal to its parent's, so it must be overridden in AddNodeNode.
 	 */
-	public void updateDepth() {
+	void updateDepth() {
 		if (parent != null) {
 			depth = parent.getDepth();
 		}
@@ -96,16 +100,23 @@ public abstract class TreeNode {
 	 * Recursively prints the tree.
 	 * @param s A string containing spaces for readability, should be an empty string on first call.
 	 */
-	public abstract void printTree(String s);
+	abstract void printTree(String s);
 
 	/**
 	 * Calls the appropriate action from the tree's TreeInterpreter.
 	 */
 	public abstract void walkTree();
 	
-	public abstract StringBuffer write();
+	/**
+	 * Translates this TreeNode to a form that can be reused to reload the tree.
+	 * @return The readable form as a StringBuffer.
+	 */
+	abstract StringBuffer write();
 	
-	public void prune(){
+	/**
+	 * Prunes this branch of the tree
+	 */
+	void prune(){
 		if(parent!=null)
 		parent.prune();
 	}
