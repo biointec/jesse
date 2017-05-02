@@ -37,5 +37,13 @@ public class DanglingIterator<E extends Comparable<E>> implements Iterator<E> {
 		current = current.getNext();
 		return value;
 	}
+
+	@Override
+	public void remove() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
 	
 }
