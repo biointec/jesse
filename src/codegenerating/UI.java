@@ -1,9 +1,6 @@
 package codegenerating;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Scanner;
 
 import graph.DanglingGraph;
@@ -23,7 +20,7 @@ public class UI {
 		int order = s.nextInt();
 		System.out.println("Do you want to generate the orbits? (y/n)");
 
-		String orbitname = "Przulj.txt";
+		String orbitname = null;
 		boolean generate = s.next().toLowerCase().charAt(0) == 'y';
 		boolean saveorbits = false;
 		if (generate) {

@@ -4,6 +4,8 @@ package orbits;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,6 +22,8 @@ public class OrbitIdentification {
 	public static List<Integer> totalPerSize;
 	private static Map<Set<Edge>,Integer> newOrbitNumbers;
 
+	public static final String DEFAULT_ORBIT_FILE = "/resources/Przulj.txt";
+	
 	/**
 	 * Reads all orbits in from file and stores them by number for
 	 * quick reference.
@@ -30,10 +34,15 @@ public class OrbitIdentification {
 		totalPerSize = new ArrayList<Integer>();
 //		orbitNumbers = new HashMap<OrbitRepresentative, Integer>();
 		newOrbitNumbers=new HashMap<Set<Edge>,Integer>();
-		File file = new File(filename);// this file contains the graphlets
-											// in order
 		try {
-			Scanner scanner = new Scanner(file);
+			Scanner scanner;
+			if (filename != null){
+				File file = new File(filename);// this file contains the graphlets in order
+				scanner = new Scanner(file);
+			} else {
+				URL url = OrbitIdentification.class.getResource(DEFAULT_ORBIT_FILE);
+				scanner = new Scanner(url.openStream());
+			}
 			int counter = 0;
 			int size = 2;
 			int orbitNumber = 0;
@@ -75,7 +84,9 @@ public class OrbitIdentification {
 			graphletsPerSize.add(counter);
 			scanner.close();
 		} catch (FileNotFoundException e) {
-			System.out.println("Ongeldige bestandsnaam");
+			System.out.println("File not found");
+		} catch (IOException e){
+			System.out.println("Could not read from input stream");
 		}
 	}
 
