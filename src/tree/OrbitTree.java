@@ -233,10 +233,10 @@ public class OrbitTree {
 	}
 
 	public static void main(String[]args){
-		OrbitIdentification.readGraphlets("Przulj.txt", 5);
+		OrbitIdentification.readGraphlets("data/Przulj.txt", 5);
 		OrbitTree ot = new OrbitTree(5);
 		ot.write("TestTree.txt");
-		OrbitTree ot2 = new OrbitTree("TestTree.txt");
+		OrbitTree ot2 = new OrbitTree("data/TestTree.txt");
 		System.out.println(ot2.leaves);
 		
 	}

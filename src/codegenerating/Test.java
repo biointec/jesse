@@ -42,7 +42,7 @@ public class Test {
 
 	public static void test7(){
 		Random r = new Random();
-		OrbitIdentification.readGraphlets("Przulj.txt", 7);
+		OrbitIdentification.readGraphlets("data/Przulj.txt", 7);
 		OrbitTree ot7 = new OrbitTree(7);
 		OrbitTree ot6 = new OrbitTree(6);
 		DanglingGraph dg=null;
@@ -81,7 +81,7 @@ public class Test {
 			}
 
 		}catch (NegativeCountException e) {
-			dg.save("brokengraph.txt");
+			dg.save("data/brokengraph.txt");
 			e.printStackTrace();
 //			writer.close();
 		}
@@ -97,7 +97,7 @@ public class Test {
 		g.calculateCommons(order - 2);
 		System.out.print((System.nanoTime() - start) * 1e-9 + "\t");
 		start = System.nanoTime();
-		OrbitIdentification.readGraphlets("Przulj.txt", order);
+		OrbitIdentification.readGraphlets("data/Przulj.txt", order);
 		OrbitTree tree;
 		tree = new OrbitTree(order - 1);
 		// tree.getRoot().printTree("");
@@ -133,11 +133,11 @@ public class Test {
 
 	public static void speeddifference(int order, int times) {
 		Random r = new Random();
-		OrbitIdentification.readGraphlets("Przulj.txt", order);
+		OrbitIdentification.readGraphlets("data/Przulj.txt", order);
 		DanglingGraph dg=null;
 		FileWriter writer = null ;
 		try {
-			writer = new FileWriter("speedDifference"+order+".txt",true);
+			writer = new FileWriter("data/speedDifference"+order+".txt",true);
 		
 
 //			for (int i = 0; i < times; i++) {
@@ -168,7 +168,7 @@ public class Test {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}catch (NegativeCountException e) {
-			dg.save("brokengraph.txt");
+			dg.save("data/brokengraph.txt");
 			e.printStackTrace();
 		}
 		finally{
@@ -188,14 +188,14 @@ public class Test {
 
 		// g.print();
 
-		PrintWriter writer = new PrintWriter("compare"+ graphorder+"-"+graphsize+".txt", "UTF-8");
+		PrintWriter writer = new PrintWriter("data/compare"+ graphorder+"-"+graphsize+".txt", "UTF-8");
 		for (int j = 0; j < 20; j++) {
 			// {
 			DanglingGraph g = GraphReader.ErdosRenyi(graphorder,graphsize);
 			start = System.nanoTime();
 			g.calculateCommons(order - 2);
 			writer.print((System.nanoTime() - start) * 1e-9 + "\t");
-			OrbitIdentification.readGraphlets("Przulj.txt", order);
+			OrbitIdentification.readGraphlets("data/Przulj.txt", order);
 			start = System.nanoTime();
 			OrbitTree tree;
 			tree = new OrbitTree(order - 1);
