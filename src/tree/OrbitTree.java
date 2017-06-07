@@ -235,7 +235,7 @@ public class OrbitTree {
 	public static void main(String[]args){
 		OrbitIdentification.readGraphlets("data/Przulj.txt", 5);
 		OrbitTree ot = new OrbitTree(5);
-		ot.write("TestTree.txt");
+		ot.write("data/TestTree.txt");
 		OrbitTree ot2 = new OrbitTree("data/TestTree.txt");
 		System.out.println(ot2.leaves);
 		
