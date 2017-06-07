@@ -4,6 +4,14 @@
   <artifactId>jesse</artifactId>
   <version>1.0.0</version>
   <name>Jesse</name>
+  
+  <licenses>
+	<license>
+		<name>gpl-3.0</name>
+		<url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+	</license>
+  </licenses>
+  
   <build>
     <sourceDirectory>src</sourceDirectory>
     <testSourceDirectory>test</testSourceDirectory>
@@ -48,7 +56,74 @@
 			<redirectTestOutputToFile>true</redirectTestOutputToFile>
 		</configuration>
 	  </plugin>
+	  
+    <!--  Add licenses -->
+	<plugin>
+		<groupId>org.codehaus.mojo</groupId>
+		<artifactId>license-maven-plugin</artifactId>
+		<version>1.7</version>
+		<executions>
+			<execution>
+				<id>license</id>
+				<configuration>
+					<projectName>Jesse</projectName>
+					<organizationName>Intec/UGent/PSB</organizationName>
+					<licenseName>gpl_v3</licenseName>
+					<inceptionYear>2017</inceptionYear>
+					<generateBundle>true</generateBundle>
+					<verbose>true</verbose>
+					<bundleLicensePath>META-INF/LICENSE.txt</bundleLicensePath>
+				</configuration>
+				<goals>
+					<goal>update-project-license</goal>
+				</goals>
+			</execution>
+		</executions>
+	</plugin>
     </plugins>
+
+
+
+	<pluginManagement>
+		<plugins>
+			<!--This plugin's configuration is used to store Eclipse m2e settings 
+				only. It has no influence on the Maven build itself. -->
+			<plugin>
+				<groupId>org.eclipse.m2e</groupId>
+				<artifactId>lifecycle-mapping</artifactId>
+				<version>1.0.0</version>
+				<configuration>
+					<lifecycleMappingMetadata>
+						<pluginExecutions>
+							<pluginExecution>
+								<pluginExecutionFilter>
+									<groupId>
+										org.codehaus.mojo
+									</groupId>
+									<artifactId>
+										license-maven-plugin
+									</artifactId>
+									<versionRange>
+										[1.7,)
+									</versionRange>
+									<goals>
+										<goal>
+											update-project-license
+										</goal>
+									</goals>
+								</pluginExecutionFilter>
+								<action>
+									<ignore></ignore>
+								</action>
+							</pluginExecution>
+						</pluginExecutions>
+					</lifecycleMappingMetadata>
+				</configuration>
+			</plugin>
+		</plugins>
+	</pluginManagement>
+    
+    
   </build>
   
   <dependencies>
