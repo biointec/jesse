@@ -1,6 +1,7 @@
 package codegenerating;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Scanner;
 
 import graph.DanglingGraph;
@@ -10,6 +11,9 @@ import orbits.OrbitIdentification;
 import tree.OrbitTree;
 
 public class UI {
+
+	private static final int CACHED_ORDER = 7;
+	private static final String ORBIT_TREE_FILE = "/resources/tree-";
 
 	public static void main(String[] args){
 
@@ -33,7 +37,7 @@ public class UI {
 				orbitname = "temp.txt";
 
 		} else {
-			if (order <= 7) {
+			if (order <= CACHED_ORDER) {
 				System.out.println("Do you want to use the standard file for the orbit numbering? (y/n)");
 				if (s.next().toLowerCase().charAt(0) != 'y') {
 					System.out.println("Enter the file name for the orbit numbering:");
@@ -57,8 +61,16 @@ public class UI {
 				treeName = s.next();
 			}
 		} else {
-			System.out.println("Enter the file name for the orbit tree:");
-			treeName = s.next();
+			if (order <= CACHED_ORDER){
+				System.out.println("Do you want to use the standard file for the orbit tree? (y/n)");
+				if (s.next().toLowerCase().charAt(0) != 'y') {
+					System.out.println("Enter the file name for the orbit tree:");
+					treeName = s.next();
+				}
+			} else {
+				System.out.println("Enter the file name for the orbit tree:");
+				treeName = s.next();
+			}
 		}
 
 		System.out.println("Enter the file name for the graph:");
@@ -66,8 +78,7 @@ public class UI {
 		System.out.println("Enter the file name for the results:");
 		String resultname = s.next();
 		s.close();
-			run(generate, order, orbitname, generateTree, saveTree, treeName, graphname, resultname);
-		
+		run(generate, order, orbitname, generateTree, saveTree, treeName, graphname, resultname);
 	}
 	
 	public static void run(boolean generate,int order,String orbitname, boolean generateTree, boolean saveTree, String treeName, String graphname, String resultname){
@@ -97,7 +108,12 @@ public class UI {
 				tree.write(treeName);
 			}
 		} else {
-			tree = new OrbitTree(treeName);
+			if (treeName != ""){
+				tree = new OrbitTree(treeName);				
+			} else {
+				URL url = OrbitTree.class.getResource(ORBIT_TREE_FILE+String.valueOf(order));
+				tree = new OrbitTree(url);
+			}
 		}
 		System.out.println("Reading graph...");
 		start = System.nanoTime();
