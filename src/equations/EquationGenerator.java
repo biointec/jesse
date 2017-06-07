@@ -51,6 +51,7 @@ public class EquationGenerator {
 			}
 		}
 		result.sortEquations();
+		result.save("equations.txt");
 		return result;
 	}
 	
