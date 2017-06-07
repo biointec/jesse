@@ -225,6 +225,15 @@ public class OrbitTree {
 		}
 	}
 
+	public static void main(String[]args){
+		OrbitIdentification.readGraphlets("Przulj.txt", 5);
+		OrbitTree ot = new OrbitTree(5);
+		ot.write("TestTree.txt");
+		OrbitTree ot2 = new OrbitTree("TestTree.txt");
+		System.out.println(ot2.leaves);
+		
+	}
+	
 	/**
 	 * Reads an OrbitTree in from file. Files read by the write method can be read.
 	 * @see OrbitTree#write(String)
@@ -239,12 +248,19 @@ public class OrbitTree {
 			OrbitRepresentative o = new OrbitRepresentative();
 			root = new AddNodeNode(o,this );
 			TreeNode tn = root;
+			boolean leaf = true;
+			leaves = new HashSet<>();
 			while (scanner.hasNextLine()) {
 				s = scanner.nextLine();
 				String[] pieces = s.split(" ");
 				if(pieces[0].charAt(0)=='/'){
+					if(leaf){
+						leaves.add(((AddNode)tn).getOrbitRepresentative());
+						leaf = false;
+					}
 					tn = tn.parent;
 				}else if (tn instanceof AddNodeNode) {
+					leaf = true;
 					AddNodeNode ann = (AddNodeNode) tn;
 					int edge =Integer.parseInt(pieces[0]);
 					o = new OrbitRepresentative(ann.getOrbitRepresentative());
@@ -263,6 +279,7 @@ public class OrbitTree {
 					}
 					ann.addChild(edge, tn);
 				}else if(tn instanceof AddEdgeNode){
+					leaf = true;
 					AddEdgeNode ann = (AddEdgeNode) tn;
 					boolean edge = Boolean.parseBoolean(pieces[0]);
 					o = new OrbitRepresentative(ann.getOrbitRepresentative());
@@ -282,6 +299,7 @@ public class OrbitTree {
 					}
 					ann.addChild(tn, edge);
 				}else if(tn instanceof ConditionNode){
+					leaf = true;
 					ConditionNode ann = (ConditionNode) tn;
 					switch(pieces[0].charAt(0)){
 					case 'n':
@@ -303,15 +321,7 @@ public class OrbitTree {
 		}
 	}
 
-	public static void main(String[] args) {
-		OrbitIdentification.readGraphlets("Przulj.txt", 6);
-		OrbitTree ot = new OrbitTree(4);
-		ot.root.printTree("");
-//		ot.write("treeText.txt");
-//		OrbitTree read = new OrbitTree("treeText.txt");
-//		System.out.println();
-//		read.root.printTree("");
-	}
+	
 	
 	/**
 	 * Prints the tree in human-readable form to the console.
