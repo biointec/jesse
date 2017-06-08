@@ -5,12 +5,19 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.*;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Set;
 
 import codegenerating.TreeInterpreter;
 import orbits.Edge;
-import orbits.OrbitIdentification;
 import orbits.OrbitRepresentative;
 
 /**
@@ -232,87 +239,107 @@ public class OrbitTree {
 	 * @param filename The name of the file that will be read.
 	 */
 	public OrbitTree(String filename) {
-		File file = new File(filename);
-		order = 0;
-		try {
+		try{
+			File file = new File(filename);
 			Scanner scanner = new Scanner(file);
-			String s = scanner.nextLine();
-			OrbitRepresentative o = new OrbitRepresentative();
-			root = new AddNodeNode(o,this );
-			TreeNode tn = root;
-			boolean leaf = true;
-			leaves = new HashSet<>();
-			while (scanner.hasNextLine()) {
-				s = scanner.nextLine();
-				String[] pieces = s.split(" ");
-				if(pieces[0].charAt(0)=='/'){
-					if(leaf){
-						leaves.add(((AddNode)tn).getOrbitRepresentative());
-						leaf = false;
-					}
-					tn = tn.parent;
-				}else if (tn instanceof AddNodeNode) {
-					leaf = true;
-					AddNodeNode ann = (AddNodeNode) tn;
-					int edge =Integer.parseInt(pieces[0]);
-					o = new OrbitRepresentative(ann.getOrbitRepresentative());
-					o.addNode(edge);
-					if(o.order()>order)order=o.order();
-					switch(pieces[1].charAt(0)){
-					case 'n':
-						tn=new AddNodeNode(o,ann);
-						break;
-					case 'e':
-						tn = new AddEdgeNode(o,ann,Integer.parseInt(pieces[2]));
-						break;
-					case 'c':
-						tn = new ConditionNode(tn, Integer.parseInt(pieces[2]), Integer.parseInt(pieces[3]));
-						break;
-					}
-					ann.addChild(edge, tn);
-				}else if(tn instanceof AddEdgeNode){
-					leaf = true;
-					AddEdgeNode ann = (AddEdgeNode) tn;
-					boolean edge = Boolean.parseBoolean(pieces[0]);
-					o = new OrbitRepresentative(ann.getOrbitRepresentative());
-					if(edge){
-						o.addEdge(o.order()-1, ann.getEdge());
-					}
-					switch(pieces[1].charAt(0)){
-					case 'n':
-						tn=new AddNodeNode(o,ann);
-						break;
-					case 'e':
-						tn = new AddEdgeNode(o,ann,Integer.parseInt(pieces[2]));
-						break;
-					case 'c':
-						tn = new ConditionNode(tn, Integer.parseInt(pieces[2]), Integer.parseInt(pieces[3]));
-						break;
-					}
-					ann.addChild(tn, edge);
-				}else if(tn instanceof ConditionNode){
-					leaf = true;
-					ConditionNode ann = (ConditionNode) tn;
-					switch(pieces[0].charAt(0)){
-					case 'n':
-						tn=new AddNodeNode(o,ann);
-						break;
-					case 'e':
-						tn = new AddEdgeNode(o,ann,Integer.parseInt(pieces[1]));
-						break;
-					case 'c':
-						tn = new ConditionNode(tn, Integer.parseInt(pieces[1]), Integer.parseInt(pieces[2]));
-						break;
-					}
-					ann.setChild(tn);
-				}
-			}
-			scanner.close();
-			root.updateDepth();
+			this.parseOrbitTreeFile(scanner);
 		} catch (FileNotFoundException e) {
-			System.out.println("Ongeldige bestandsnaam");
+			System.err.println("File not found");
 		}
-//		print();
+		
+	}
+	
+	/**
+	 * Reads an OrbitTree in from file. Files read by the write method can be read.
+	 * @see OrbitTree#write(String)
+	 * @param filename The name of the file that will be read.
+	 */
+	public OrbitTree(URL url) {
+		try {
+			InputStream inputStream = url.openStream();
+			Scanner scanner = new Scanner(inputStream);
+			this.parseOrbitTreeFile(scanner);
+		} catch (IOException e) {
+			System.err.println("Couldn't read from resource");
+		}		
+	}
+	
+	
+	public void parseOrbitTreeFile(Scanner scanner) {
+		order = 0;
+		String s = scanner.nextLine();
+		OrbitRepresentative o = new OrbitRepresentative();
+		root = new AddNodeNode(o,this );
+		TreeNode tn = root;
+		boolean leaf = true;
+		leaves = new HashSet<>();
+		while (scanner.hasNextLine()) {
+			s = scanner.nextLine();
+			String[] pieces = s.split(" ");
+			if(pieces[0].charAt(0)=='/'){
+				if(leaf){
+					leaves.add(((AddNode)tn).getOrbitRepresentative());
+					leaf = false;
+				}
+				tn = tn.parent;
+			}else if (tn instanceof AddNodeNode) {
+				leaf = true;
+				AddNodeNode ann = (AddNodeNode) tn;
+				int edge =Integer.parseInt(pieces[0]);
+				o = new OrbitRepresentative(ann.getOrbitRepresentative());
+				o.addNode(edge);
+				if(o.order()>order)order=o.order();
+				switch(pieces[1].charAt(0)){
+				case 'n':
+					tn=new AddNodeNode(o,ann);
+					break;
+				case 'e':
+					tn = new AddEdgeNode(o,ann,Integer.parseInt(pieces[2]));
+					break;
+				case 'c':
+					tn = new ConditionNode(tn, Integer.parseInt(pieces[2]), Integer.parseInt(pieces[3]));
+					break;
+				}
+				ann.addChild(edge, tn);
+			}else if(tn instanceof AddEdgeNode){
+				leaf = true;
+				AddEdgeNode ann = (AddEdgeNode) tn;
+				boolean edge = Boolean.parseBoolean(pieces[0]);
+				o = new OrbitRepresentative(ann.getOrbitRepresentative());
+				if(edge){
+					o.addEdge(o.order()-1, ann.getEdge());
+				}
+				switch(pieces[1].charAt(0)){
+				case 'n':
+					tn=new AddNodeNode(o,ann);
+					break;
+				case 'e':
+					tn = new AddEdgeNode(o,ann,Integer.parseInt(pieces[2]));
+					break;
+				case 'c':
+					tn = new ConditionNode(tn, Integer.parseInt(pieces[2]), Integer.parseInt(pieces[3]));
+					break;
+				}
+				ann.addChild(tn, edge);
+			}else if(tn instanceof ConditionNode){
+				leaf = true;
+				ConditionNode ann = (ConditionNode) tn;
+				switch(pieces[0].charAt(0)){
+				case 'n':
+					tn=new AddNodeNode(o,ann);
+					break;
+				case 'e':
+					tn = new AddEdgeNode(o,ann,Integer.parseInt(pieces[1]));
+					break;
+				case 'c':
+					tn = new ConditionNode(tn, Integer.parseInt(pieces[1]), Integer.parseInt(pieces[2]));
+					break;
+				}
+				ann.setChild(tn);
+			}
+		}
+		scanner.close();
+		root.updateDepth();
 	}
 
 	

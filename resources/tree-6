@@ -1,0 +1,518 @@
+n
+0 n
+0 e 1
+true n
+0 e 1
+true e 2
+true n
+0 e 1
+true e 2
+true e 3
+true c 1 2
+c 1 3
+c 1 4
+c 2 3
+c 2 4
+c 3 4
+n
+/n
+/c
+/c
+/c
+/c
+/c
+/c
+/e
+/e
+/e
+1 e 0
+false e 2
+true e 3
+true c 1 2
+c 1 3
+c 2 3
+n
+/n
+/c
+/c
+/c
+/e
+false e 3
+true c 1 3
+n
+/n
+/c
+false c 2 3
+n
+/n
+/c
+/e
+/e
+/e
+/n
+/e
+/e
+1 e 0
+false e 2
+true n
+1 e 0
+false e 2
+true e 3
+true c 1 2
+c 3 4
+n
+/n
+/c
+/c
+false c 1 2
+c 3 4
+n
+/n
+/c
+/c
+/e
+/e
+/e
+3 e 0
+false e 1
+false e 2
+false c 1 2
+n
+/n
+/c
+/e
+/e
+/e
+/n
+false n
+1 e 0
+false e 2
+true e 3
+true n
+/n
+false n
+/n
+/e
+false e 3
+true c 3 4
+n
+/n
+/c
+false c 3 4
+n
+/n
+/c
+/e
+/e
+/e
+2 e 0
+false e 1
+false e 3
+true c 1 2
+n
+/n
+/c
+false c 1 2
+n
+/n
+/c
+/e
+/e
+/e
+3 e 0
+false e 1
+false e 2
+false n
+/n
+/e
+/e
+/e
+/n
+/e
+/e
+/n
+false n
+0 e 1
+true e 2
+true n
+0 e 1
+true e 2
+true e 3
+true c 1 2
+c 3 4
+n
+/n
+/c
+/c
+false c 1 2
+c 1 3
+c 1 4
+c 3 4
+n
+/n
+/c
+/c
+/c
+/c
+/e
+/e
+/e
+1 e 0
+false e 2
+true e 3
+true c 1 2
+n
+/n
+/c
+false c 1 2
+n
+/n
+/c
+/e
+false e 3
+true n
+/n
+false n
+/n
+/e
+/e
+/e
+3 e 0
+false e 1
+false e 2
+false c 1 2
+n
+/n
+/c
+/e
+/e
+/e
+/n
+/e
+false e 2
+true n
+0 e 1
+true e 2
+true e 3
+true c 2 3
+n
+/n
+/c
+/e
+false e 3
+true c 1 2
+n
+/n
+/c
+false c 1 2
+c 1 3
+c 1 4
+c 2 3
+n
+/n
+/c
+/c
+/c
+/c
+/e
+/e
+false e 2
+true e 3
+true c 2 3
+c 2 4
+c 3 4
+n
+/n
+/c
+/c
+/c
+/e
+/e
+/e
+1 e 0
+false e 2
+true e 3
+true c 2 3
+n
+/n
+/c
+/e
+false e 3
+true n
+/n
+false c 2 3
+n
+/n
+/c
+/e
+/e
+/e
+2 e 0
+false e 1
+false e 3
+true c 2 3
+n
+/n
+/c
+false n
+/n
+/e
+/e
+/e
+/n
+false n
+0 e 1
+true e 2
+true e 3
+true c 1 2
+c 1 3
+c 2 3
+n
+/n
+/c
+/c
+/c
+/e
+/e
+false e 2
+true e 3
+true c 2 3
+n
+/n
+/c
+/e
+false e 3
+true c 1 2
+c 3 4
+n
+/n
+/c
+/c
+false c 1 2
+c 1 3
+c 1 4
+c 2 3
+c 2 4
+c 3 4
+n
+/n
+/c
+/c
+/c
+/c
+/c
+/c
+/e
+/e
+/e
+1 e 0
+false e 2
+true e 3
+true c 1 2
+c 1 3
+c 2 3
+n
+/n
+/c
+/c
+/c
+/e
+false e 3
+true c 1 3
+n
+/n
+/c
+false c 2 3
+n
+/n
+/c
+/e
+/e
+/e
+/n
+/e
+/e
+1 e 0
+false e 2
+true n
+1 e 0
+false e 2
+true e 3
+true c 1 2
+c 3 4
+n
+/n
+/c
+/c
+false c 1 2
+c 3 4
+n
+/n
+/c
+/c
+/e
+/e
+/e
+3 e 0
+false e 1
+false e 2
+false c 1 2
+n
+/n
+/c
+/e
+/e
+/e
+/n
+false n
+1 e 0
+false e 2
+true e 3
+true n
+/n
+false n
+/n
+/e
+false e 3
+true c 3 4
+n
+/n
+/c
+false c 3 4
+n
+/n
+/c
+/e
+/e
+/e
+2 e 0
+false e 1
+false e 3
+true c 1 2
+n
+/n
+/c
+false c 1 2
+n
+/n
+/c
+/e
+/e
+/e
+3 e 0
+false e 1
+false e 2
+false n
+/n
+/e
+/e
+/e
+/n
+/e
+/e
+/n
+/e
+1 e 0
+false n
+1 e 0
+false e 2
+true n
+1 e 0
+false e 2
+true e 3
+true c 2 3
+c 2 4
+c 3 4
+n
+/n
+/c
+/c
+/c
+/e
+/e
+/e
+2 e 0
+false e 1
+false e 3
+true c 2 3
+n
+/n
+/c
+false n
+/n
+/e
+/e
+/e
+/n
+false n
+1 e 0
+false e 2
+true e 3
+true c 2 3
+n
+/n
+/c
+/e
+false e 3
+true c 3 4
+n
+/n
+/c
+false c 2 3
+c 2 4
+c 3 4
+n
+/n
+/c
+/c
+/c
+/e
+/e
+/e
+2 e 0
+false e 1
+false e 3
+true c 2 3
+n
+/n
+/c
+false n
+/n
+/e
+/e
+/e
+/n
+/e
+/e
+2 e 0
+false e 1
+false n
+2 e 0
+false e 1
+false e 3
+true c 3 4
+n
+/n
+/c
+false c 3 4
+n
+/n
+/c
+/e
+/e
+/e
+3 e 0
+false e 1
+false e 2
+false n
+/n
+/e
+/e
+/e
+/n
+/e
+/e
+/n
+/e
+/n
+/n

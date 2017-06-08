@@ -38,7 +38,7 @@ public class GraphReader {
 	}
 
 	public static void main(String[] args) {
-		DanglingGraph dg = readGraph("Test.txt");
+		DanglingGraph dg = readGraph("data/Test.txt");
 		dg.printMatrix();
 		dg.print();
 	}
