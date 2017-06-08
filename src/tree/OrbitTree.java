@@ -225,14 +225,6 @@ public class OrbitTree {
 		}
 	}
 
-	public static void main(String[]args){
-		OrbitIdentification.readGraphlets("Przulj.txt", 5);
-		OrbitTree ot = new OrbitTree(5);
-		ot.write("TestTree.txt");
-		OrbitTree ot2 = new OrbitTree("TestTree.txt");
-		System.out.println(ot2.leaves);
-		
-	}
 	
 	/**
 	 * Reads an OrbitTree in from file. Files read by the write method can be read.
@@ -316,9 +308,11 @@ public class OrbitTree {
 				}
 			}
 			scanner.close();
+			root.updateDepth();
 		} catch (FileNotFoundException e) {
 			System.out.println("Ongeldige bestandsnaam");
 		}
+//		print();
 	}
 
 	
