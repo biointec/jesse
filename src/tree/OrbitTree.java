@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ import java.util.Set;
 
 import codegenerating.TreeInterpreter;
 import orbits.Edge;
-import orbits.OrbitIdentification;
 import orbits.OrbitRepresentative;
 
 /**
@@ -232,47 +232,40 @@ public class OrbitTree {
 		}
 	}
 
-	public static void main(String[]args){
-		OrbitIdentification.readGraphlets("data/Przulj.txt", 5);
-		OrbitTree ot = new OrbitTree(5);
-		ot.write("data/TestTree.txt");
-		OrbitTree ot2 = new OrbitTree("data/TestTree.txt");
-		System.out.println(ot2.leaves);
+	
+	/**
+	 * Reads an OrbitTree in from file. Files read by the write method can be read.
+	 * @see OrbitTree#write(String)
+	 * @param filename The name of the file that will be read.
+	 */
+	public OrbitTree(String filename) {
+		try{
+			File file = new File(filename);
+			Scanner scanner = new Scanner(file);
+			this.parseOrbitTreeFile(scanner);
+		} catch (FileNotFoundException e) {
+			System.err.println("File not found");
+		}
 		
 	}
 	
 	/**
-	 * Reads an OrbitTree in from {@link URL} (used to read from jar resources). 
-	 * Files created by the write method can be read.
-	 * 
-	 * @see OrbitTree#write(String)
-	 * @param url Location of the file that will be read.
-	 */
-	public OrbitTree(URL url){
-		try {
-			Scanner scanner = new Scanner(url.openStream());
-			parseOrbitTreeFile(scanner);
-		} catch (IOException e) {
-			System.out.println("Could not read from resource");
-		}
-	}
-	
-	/**
-	 * Reads an OrbitTree in from file. Files created by the write method can be read.
+	 * Reads an OrbitTree in from file. Files read by the write method can be read.
 	 * @see OrbitTree#write(String)
 	 * @param filename The name of the file that will be read.
 	 */
-	public OrbitTree(String filename){
-		File file = new File(filename);
+	public OrbitTree(URL url) {
 		try {
-			Scanner scanner = new Scanner(file);
-			parseOrbitTreeFile(scanner);
-		} catch (FileNotFoundException e) {
-			System.out.println("File not found");
-		}
+			InputStream inputStream = url.openStream();
+			Scanner scanner = new Scanner(inputStream);
+			this.parseOrbitTreeFile(scanner);
+		} catch (IOException e) {
+			System.err.println("Couldn't read from resource");
+		}		
 	}
 	
-	public void parseOrbitTreeFile(Scanner scanner){
+	
+	public void parseOrbitTreeFile(Scanner scanner) {
 		order = 0;
 		String s = scanner.nextLine();
 		OrbitRepresentative o = new OrbitRepresentative();
@@ -346,8 +339,8 @@ public class OrbitTree {
 			}
 		}
 		scanner.close();
-	} 
-
+		root.updateDepth();
+	}
 
 	
 	
