@@ -12,7 +12,11 @@ import tree.OrbitTree;
 
 public class UI {
 
-	private static final int CACHED_ORDER = 7;
+	/**
+	 * For searches up to this order, the orbits and orbit trees are
+	 * pre-calculated and packaged along with the application.
+	 */
+	public static final int CACHED_ORDER = 7;
 	private static final String ORBIT_TREE_FILE = "/resources/tree-";
 
 	public static void main(String[] args){
@@ -133,5 +137,6 @@ public class UI {
 		di.write(resultname, result);
 		System.out.println("Saved results in " + +(System.nanoTime() - start) * 1e-9 + "s");
 	}
+	
 
 }
