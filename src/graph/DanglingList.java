@@ -201,7 +201,7 @@ public class DanglingList<E extends Comparable<E>> implements Comparable<Danglin
 		DanglingElement<E> a = head;
 		if (isEmpty()) {
 			add(element);
-		} else if (element.compareTo(head.getValue()) < 0) {
+		} else if (element.compareTo(head.getValue()) <= 0) {
 			addFirst(element);
 		} else if (element.compareTo(tail.getValue()) > 0) {
 			add(element);
@@ -210,7 +210,6 @@ public class DanglingList<E extends Comparable<E>> implements Comparable<Danglin
 			while (a != null && a.getValue().compareTo(element) < 0) {
 				a = a.getNext();
 			}
-
 			a.getPrevious().setNext(result);
 			result.setPrevious(a.getPrevious());
 			a.setPrevious(result);

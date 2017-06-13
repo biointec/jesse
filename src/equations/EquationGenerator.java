@@ -50,7 +50,7 @@ public class EquationGenerator {
 				result.addEquation(e);
 			}
 		}
-		result.sortEquations();
+//		result.sortEquations();
 		result.save("equations.txt");
 		return result;
 	}

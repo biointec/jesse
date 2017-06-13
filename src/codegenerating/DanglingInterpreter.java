@@ -191,7 +191,7 @@ public class DanglingInterpreter implements TreeInterpreter {
 			}
 			for (int j = OrbitIdentification.getNOrbitsTotal(order + 1) - 2; j >= OrbitIdentification
 					.getNOrbitsTotal(order); j--) {
-				Equation e = em.getEqu()[j - OrbitIdentification.getNOrbitsTotal(order)];
+				Equation e = em.getEqu().get(j - OrbitIdentification.getNOrbitsTotal(order));
 				Iterator<OrbitRepresentative> it = e.getLhs().keySet().iterator();
 				it.next();
 				while (it.hasNext()) {
