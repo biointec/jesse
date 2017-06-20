@@ -17,7 +17,12 @@ public class UI {
 	 * pre-calculated and packaged along with the application.
 	 */
 	public static final int CACHED_ORDER = 7;
-	private static final String ORBIT_TREE_FILE = "/resources/tree-";
+	
+	/**
+	 * Locations for {@link OrbitTree} files can be constructed as follow:
+	 * 	ORBIT_TREE_FILE+String.valueOf(order)
+	 */
+	public static final String ORBIT_TREE_FILE = "/resources/tree-";
 
 	public static void main(String[] args){
 
