@@ -77,7 +77,6 @@ public class Program {
 
 	public static void generateGraphlets(int xx, String filename) throws IOException {
 		cancelled = false;
-		taskMonitor = null;
 		
 		PrintWriter ps2 = new PrintWriter(new BufferedWriter(new FileWriter(filename + ".txt")));
 		PrintWriter ps = new PrintWriter(new BufferedWriter(new FileWriter(filename + ".ps")));
