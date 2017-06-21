@@ -6,12 +6,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 
+import equations.EquationGenerator;
 import graph.DanglingGraph;
 import graph.GraphReader;
 import graphletgenerating.Program;
@@ -33,11 +37,51 @@ public class Test {
 //		}
 ////		System.out.println();
 //		for(int i=0;i<20;i++)
-//		 test("example.out",6);
+//		 test("data/Pu.txt",6);
 		
-//		speeddifference(7,100);
-		 compare(5,50,200);
+//		speeddifference(6,100);
+//		 compare(5,50,200);
 //		test7();
+//		graphletdegree(6, 100);
+		
+//		OrbitIdentification.readGraphlets("data/Przulj.txt", 6);
+//		System.out.println(OrbitIdentification.getOrbit(396));
+//		System.out.println(OrbitIdentification.getOrbit(412));
+//		System.out.println(OrbitIdentification.getOrbit(415));
+//		System.out.println(OrbitIdentification.getOrbit(449));
+//		System.out.println(OrbitIdentification.getOrbit(34));
+
+//		System.out.println(EquationGenerator.generateEquations(6).getEqu()[396-OrbitIdentification.getNOrbitsTotal(5)]);
+		
+		DanglingGraph dg = GraphReader.readGraph("data/Pu.txt");
+		int [] distances = dg.floydWarshall()[0];
+		Set<String >a = new HashSet<String>();
+		for(int i=0;i<distances.length;i++){
+			if(distances[i]>4){
+				a.add(dg.getName(i));
+			}
+		}
+		System.out.println(a);
+		copyWithout("data/Pu.txt",a);
+		 test("copy.txt",6);
+	}
+	
+	public static void copyWithout(String naam,Set<String> ss) throws FileNotFoundException{
+		File file = new File(naam);
+			Scanner scanner = new Scanner(file);
+			PrintWriter pw = new PrintWriter("copy.txt");
+			while (scanner.hasNextLine()) {
+				String a =scanner.nextLine();
+				System.out.println(a);
+				String[] s = a.split("\\t");
+				if(!ss.contains(s[0])&&!ss.contains(s[1])){
+					pw.println(a);
+				}
+			}
+		
+			pw.close();
+			scanner.close();
+			
 	}
 
 	public static void test7(){
@@ -60,7 +104,7 @@ public class Test {
 				// int n = 100;
 				// int m = 2413;
 				System.out.println(n + "," + m);
-				dg = GraphReader.ErdosRenyi(n, m);
+				dg = GraphReader.barabasiAlbert(n, m);
 				long start = System.nanoTime();
 				CountingInterpreter ci = new CountingInterpreter(dg, 7, ot7);
 				long[][] result1 = ci.run();
@@ -86,13 +130,14 @@ public class Test {
 //			writer.close();
 		}
 	}
+	
+	
 	public static void test(String naam, int order) throws Exception {
 		long start;
 
 		// g.print();
 		DanglingGraph g = GraphReader.readGraph(naam);
-		System.out.println(g.order());
-		// System.out.println(g.size());
+		System.out.println(g.order()+","+g.size());
 		start = System.nanoTime();
 		g.calculateCommons(order - 2);
 		System.out.print((System.nanoTime() - start) * 1e-9 + "\t");
@@ -105,9 +150,10 @@ public class Test {
 		System.out.print((System.nanoTime() - start) * 1e-9 + "\t");
 		start = System.nanoTime();
 		long[][] result = di.run();
+		long[] result1 = result[0];
+		try{
 		count(result, 6);
 		System.out.print((System.nanoTime() - start) * 1e-9 + "\t");
-		long[] result1 = result[0];
 		start = System.nanoTime();
 		tree = new OrbitTree(order);
 		CountingInterpreter ci = new CountingInterpreter(g, order, tree);
@@ -127,6 +173,24 @@ public class Test {
 			System.out.println(Arrays.toString(result2));
 
 		}
+		}catch (NegativeCountException e){
+			start = System.nanoTime();
+			tree = new OrbitTree(order);
+			CountingInterpreter ci = new CountingInterpreter(g, order, tree);
+			System.out.print((System.nanoTime() - start)*1e-9+"\t");
+			start = System.nanoTime();
+			result = ci.run();
+			long[]result2 = result[0];
+			System.out.println((System.nanoTime() - start) * 1e-9 + "\t");
+			for (int i = 0; i < result1.length; i++) {
+				if (result1[i] != result2[i]) {
+					System.out.println(i);
+				}
+			}
+			System.out.println(Arrays.toString(result1));
+			System.out.println(Arrays.toString(result2));
+			
+		}
 		// System.out.println(OrbitIdentification.getNOrbitsTotal(order));
 	}
 	// tree.getRoot().printTree("");
@@ -137,18 +201,21 @@ public class Test {
 		DanglingGraph dg=null;
 		FileWriter writer = null ;
 		try {
-			writer = new FileWriter("data/speedDifference"+order+".txt",true);
+			writer = new FileWriter("data/speedDifferenceBA"+order+".txt",true);
 		
 
-//			for (int i = 0; i < times; i++) {
-			while(true){
-				int n = r.nextInt(250) + 50;
+			for (int i = 0; i < times; i++) {
+//			while(true){
+				int n = r.nextInt(200) + 50;
 				int max = (n * (n - 1)) / 2;
-				int m = r.nextInt(max *19/100) + max / 100;
+//				int m = r.nextInt(max *19/100) + max / 100;
+				int m = r.nextInt(10)+1;
+//				double d = r.nextDouble()/3+.1;
 				// int n = 100;
 				// int m = 2413;
-				System.out.println(n + "," + m);
-				dg = GraphReader.ErdosRenyi(n, m);
+//				System.out.println(n + "," + m);
+				dg = GraphReader.barabasiAlbert(n,m);
+				System.out.println(dg.order()+","+dg.size());
 				long start = System.nanoTime();
 				CountingInterpreter ci = new CountingInterpreter(dg, order, new OrbitTree(order));
 				long[][] result = ci.run();
@@ -163,6 +230,7 @@ public class Test {
 				writer.write(""+(count(result, order) / (double) count(result, order - 1)));
 				writer.write("\t");
 				writer.write(""+(stop/(double)(System.nanoTime()-start)));
+				writer.write("\n");
 			}
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -182,6 +250,40 @@ public class Test {
 		}
 
 	}
+	
+	public static void graphletdegree(int order, int times) {
+		OrbitIdentification.readGraphlets("data/Przulj.txt", order);
+		DanglingGraph dg=null;
+		PrintWriter writer = null ;
+		try {
+			writer = new PrintWriter("data/graphletDegreeER"+order+".txt");
+		
+
+			for (int i = 0; i < times; i++) {
+//				int n = 100;
+//				int m = 10;
+//				System.out.println(n + "," + m);
+				dg = GraphReader.ErdosRenyi(100,900);
+				dg.calculateCommons(order-2);
+				System.out.println(dg.order()+","+dg.size());
+				DanglingInterpreter di = new DanglingInterpreter(dg, new OrbitTree(order - 1));
+				long [][] result = di.run();
+
+				for(int j=0;j<result.length;j++){
+					for(int k=0;k<result[j].length;k++){
+						writer.print(result[j][k]);
+						writer.print("\t");
+					}
+					writer.println();
+				}
+			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		writer.close();
+
+	}
 
 	public static void compare(int order, int graphorder, int graphsize) throws FileNotFoundException, UnsupportedEncodingException {
 		long start;
@@ -191,7 +293,7 @@ public class Test {
 		PrintWriter writer = new PrintWriter("data/compare"+ graphorder+"-"+graphsize+".txt", "UTF-8");
 		for (int j = 0; j < 20; j++) {
 			// {
-			DanglingGraph g = GraphReader.ErdosRenyi(graphorder,graphsize);
+			DanglingGraph g = GraphReader.barabasiAlbert(graphorder,graphsize/graphorder);
 			start = System.nanoTime();
 			g.calculateCommons(order - 2);
 			writer.print((System.nanoTime() - start) * 1e-9 + "\t");
