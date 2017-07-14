@@ -169,5 +169,9 @@ public class OrbitIdentification {
 		return permutedEdges;
 	}
 
+	public static void main(String[]args){
+		readGraphlets(null, 6);
+		System.out.println(getOrbit(74));
+	}
 	
 }
