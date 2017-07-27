@@ -33,8 +33,9 @@ public class EquationGenerator {
 	}
 
 	
-	public static EquationManager generateEquations(int order, Collection<OrbitRepresentative> reps) {
-		EquationManager result = new EquationManager(order);
+	public static /*EquationManager */ List<Equation >generateEquations(int order, Collection<OrbitRepresentative> reps) {
+//		EquationManager result = new EquationManager(order);
+		List <Equation> result = new ArrayList<>();
 		for (OrbitRepresentative g : reps) {
 			assert(g.order()==order-1);
 			for (List<Integer> connections : commons(g.order())) {
@@ -47,25 +48,25 @@ public class EquationGenerator {
 				}
 				Equation e = new Equation(lhsGraphlets, lhs, g,
 						connections);
-				result.addEquation(e);
+				result.add(e);
 			}
 		}
 //		result.sortEquations();
-		result.save("equations.txt");
+//		result.save("equations.txt");
 		return result;
 	}
 	
-	/**
-	 * Generates all equations for counting graphlets of the given order.
-	 * 
-	 * @param order
-	 *            The order of the graphlets that can be counted with the
-	 *            resulting equations.
-	 * @return An EquationManager containing all equations.
-	 */
-	public static EquationManager generateEquations(int order){
-		return generateEquations(order,generateOrbits(order-1));
-	}
+//	/**
+//	 * Generates all equations for counting graphlets of the given order.
+//	 * 
+//	 * @param order
+//	 *            The order of the graphlets that can be counted with the
+//	 *            resulting equations.
+//	 * @return An EquationManager containing all equations.
+//	 */
+//	public static EquationManager generateEquations(int order){
+//		return generateEquations(order,generateOrbits(order-1));
+//	}
 
 	/**
 	 * Generates all possible combinations from a collection of a certain size

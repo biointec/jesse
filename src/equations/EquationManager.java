@@ -26,7 +26,7 @@ public class EquationManager {
 	 *            The order of the orbits to be counted with the equations in
 	 *            this equation manager.
 	 */
-	public EquationManager(int order) {
+	public EquationManager(int order/*, List<Equation> eqs*/) {
 		// equ = new Equation[OrbitIdentification.getNOrbitsForOrder(order) -
 		// 1];
 		equ = new ArrayList<List<Equation>>(OrbitIdentification.getNOrbitsForOrder(order) - 1);
@@ -34,7 +34,17 @@ public class EquationManager {
 			equ.add(new ArrayList<Equation>());
 		}
 		this.size = order;
+		/*for(Equation e:eqs){
+			addEquation(e);
+		}
+		finalise();*/
 		// equationsByRhs = new TreeMap<OrbitRepresentative, List<Equation>>();
+	}
+	
+	public void addAll(List<Equation> e){
+		for (Equation eq:e){
+			addEquation(eq);
+		}
 	}
 
 	/**
@@ -45,7 +55,7 @@ public class EquationManager {
 	 * 
 	 * @param e
 	 */
-	void addEquation(Equation e) {
+	private void addEquation(Equation e) {
 		int i = e.getLowestOrbit() - OrbitIdentification.getNOrbitsTotal(size - 1);
 		// if (equ[i] == null) {
 		// equ[i] = e;
@@ -101,16 +111,17 @@ public class EquationManager {
 		// result[i]= equ.get(i).get(0);
 		// }
 		// return result;
-//		if (finalEquations == null) {
-			finalEquations = new ArrayList<Equation>();
-			for (List<Equation> e : equ) {
-				finalEquations.add(e.get(0));
-			}
-//		}
+		if (finalEquations == null) {
+//			finalEquations = new ArrayList<Equation>();
+//			for (List<Equation> e : equ) {
+//				finalEquations.add(e.get(0));
+//			}
+			finalise();
+		}
 		return finalEquations;
 	}
 	
-	public void finalize(){
+	private void finalise(){
 		finalEquations = new ArrayList<Equation>();
 		for (List<Equation> e : equ) {
 			finalEquations.add(e.get(0));
@@ -225,8 +236,8 @@ public class EquationManager {
 		}
 	}
 
-	public static void main(String[] args) {
-		OrbitIdentification.readGraphlets("Przulj.txt", 6);
-		EquationGenerator.generateEquations(6).save("allequations.txt");
-	}
+//	public static void main(String[] args) {
+//		OrbitIdentification.readGraphlets("Przulj.txt", 6);
+//		EquationGenerator.generateEquations(6).save("allequations.txt");
+//	}
 }
