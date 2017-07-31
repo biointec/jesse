@@ -229,6 +229,12 @@ public class DanglingInterpreter implements TreeInterpreter {
 	}
 
 	
+	
+	public EquationManager getEquationManager() {
+		return em;
+	}
+
+
 	public void write(String filename, long[][] result) {
 		try {
 			PrintWriter ps = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
