@@ -53,20 +53,23 @@ public class EquationGenerator {
 		}
 //		result.sortEquations();
 //		result.save("equations.txt");
+//		System.out.println(result);
 		return result;
 	}
 	
-//	/**
-//	 * Generates all equations for counting graphlets of the given order.
-//	 * 
-//	 * @param order
-//	 *            The order of the graphlets that can be counted with the
-//	 *            resulting equations.
-//	 * @return An EquationManager containing all equations.
-//	 */
-//	public static EquationManager generateEquations(int order){
-//		return generateEquations(order,generateOrbits(order-1));
-//	}
+//	private void save(String name)
+	
+	/**
+	 * Generates all equations for counting graphlets of the given order.
+	 * 
+	 * @param order
+	 *            The order of the graphlets that can be counted with the
+	 *            resulting equations.
+	 * @return An EquationManager containing all equations.
+	 */
+	public static List<Equation> generateEquations(int order){
+		return generateEquations(order,generateOrbits(order-1));
+	}
 
 	/**
 	 * Generates all possible combinations from a collection of a certain size

@@ -7,11 +7,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
+import equations.Equation;
+import equations.EquationComparator;
+import equations.EquationGenerator;
 import equations.EquationManager;
 import equations.LHSLengthComparator;
 import equations.RHSLengthComparator;
@@ -26,31 +30,15 @@ import tree.OrbitTree;
 public class Test {
 
 	public static void main(String[] args) throws Exception {
-		// UI.run(false, 5, "Przulj.txt", true, false, "whatever",
-		// "example.out", "result2.txt");
-		// while(true)
-		// speeddifference(6, 100);
-		//
-		// for (int i = 500; i < 2001; i += 100) {
-		// System.out.println(i);
-		// compare(6, 100, i);
-		// System.out.println();
-		// }
-		//// System.out.println();
-		// for(int i=0;i<20;i++)
-		// test("example.out",6);
-
-		// speeddifference(7,100);
-		// compare(5, 50, 200);
-		// test7();
-		// speedTest(5, 100, 100);
-//		Long l = Long.MAX_VALUE;
-////		System.out.println(l);
-////		l++;
-//		System.out.println(l);
-//		l*=2;
-//		System.out.println(l);
-		testType(5, 100,100);
+//		OrbitIdentification.readGraphlets("Przulj.txt", 5);
+//		List<Equation> equations = EquationGenerator.generateEquations(5);
+//		Collections.sort(equations,new EquationComparator());
+//		EquationManager em = new SelectiveEquationManager(5, new RHSTermComparator(),true);
+//		em.addAll(equations);
+//		System.out.println(em.getEqu());
+////		System.out.println(new RHSTermComparator().compare(em.getEqu().get(0),em.getEqu().get(12)));
+////		System.out.println(new RHSTermComparator().compare(em.getEqu().get(12),em.getEqu().get(0)));
+		testType(5,100,1);
 	}
 
 	public static void testType(int order, int graphorder, int times) {

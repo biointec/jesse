@@ -19,11 +19,14 @@ public class SelectiveEquationManager extends EquationManager{
 		// TODO Auto-generated constructor stub
 	}
 
-	public void finalise(){
+	protected void finalise(){
 		finalEquations = new ArrayList<Equation>();
+//		System.out.println("ping");
 		for (List<Equation> es : equ) {
 			Equation e =(es.get(0));
 			for(Equation ee:es){
+//				if(ee.getLowestOrbit()==42)
+//				System.out.println(ee);
 				if(direction ==( criterion.compare(e, ee)>0)){
 					e = ee;
 				}

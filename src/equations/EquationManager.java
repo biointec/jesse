@@ -55,7 +55,7 @@ public class EquationManager {
 	 * 
 	 * @param e
 	 */
-	private void addEquation(Equation e) {
+	protected void addEquation(Equation e) {
 		int i = e.getLowestOrbit() - OrbitIdentification.getNOrbitsTotal(size - 1);
 		// if (equ[i] == null) {
 		// equ[i] = e;
@@ -121,7 +121,8 @@ public class EquationManager {
 		return finalEquations;
 	}
 	
-	private void finalise(){
+	protected void finalise(){
+//		System.out.println("ping1");
 		finalEquations = new ArrayList<Equation>();
 		for (List<Equation> e : equ) {
 			finalEquations.add(e.get(0));
@@ -136,6 +137,7 @@ public class EquationManager {
 			}
 			equationsByRhs.get(n).add(e);
 		}
+//		System.out.println(finalEquations);
 	}
 
 	/**
