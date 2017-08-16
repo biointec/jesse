@@ -110,10 +110,22 @@ public class Equation {
 			minus += e.minus;
 	}
 
+	@Override
 	public String toString() {
-
+		return toOutputString(true);
+	}
+	
+	/**
+	 * 
+	 * @param bracketWrapped enables external applications to not wrap every LaTeX equation in square brackets
+	 * @return
+	 */
+	public String toOutputString(boolean bracketWrapped) {
 		if (EquationGenerator.latex) {
-			String result = "\\[";
+			String result = "";			
+			if (bracketWrapped) {
+				result = "\\[";				
+			}
 			for (OrbitRepresentative g : lhs.keySet()) {
 				result += (lhs.get(g) == 1 ? "" : lhs.get(g)) + "o_{"
 						+ OrbitIdentification.identifyOrbit(g) + "} + ";
@@ -131,7 +143,9 @@ public class Equation {
 				result += " + ";
 			}
 			result = result.substring(0, result.length() - 2);
-			result += "\\]";
+			if (bracketWrapped) {
+				result += "\\]";				
+			}
 			result += "\n";
 
 			return result;
