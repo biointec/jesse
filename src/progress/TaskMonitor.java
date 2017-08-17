@@ -27,10 +27,6 @@ public interface TaskMonitor {
 	 */
 	public void setStatusMessage(String msg);
 	
-	/**
-	 * Signal the ongoing task it should stop as soon as it can, clean up and return
-	 */
-	public void cancel();
 	
 	/**
 	 * 
