@@ -187,7 +187,7 @@ public class DanglingInterpreter implements TreeInterpreter {
 		for (int i = 0; i < g.order(); i++) {
 			if (taskMonitor != null) {
 				taskMonitor.setProgress((double)i/g.order());
-				taskMonitor.setStatusMessage("Counting orbits for order "+i);
+				taskMonitor.setStatusMessage("Counting orbits for node "+i);
 			}
 			reset();
 			g.getNeighbors(i);
