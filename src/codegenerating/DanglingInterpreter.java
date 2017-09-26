@@ -46,7 +46,7 @@ public class DanglingInterpreter implements TreeInterpreter {
 	/**
 	 * Creates a new DanglingInterpreter for the given graph, graphlet size and OrbitTree.
 	 * @param g The graph in which the orbits are counted.
-	 * @param size The size of graphlets whose orbits are counted.
+	 * @param order The size of graphlets whose orbits are counted.
 	 * @param ot The orbit tree for counting.
 	 */
 	public DanglingInterpreter(DanglingGraph g, OrbitTree ot, EquationManager em) {

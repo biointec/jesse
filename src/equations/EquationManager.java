@@ -16,47 +16,46 @@ public class EquationManager {
 	protected List<Equation> finalEquations;
 	protected SortedSet<OrbitRepresentative> rhsOrbits = new TreeSet<OrbitRepresentative>();
 	protected SortedMap<OrbitRepresentative, List<Equation>> equationsByRhs;
-	protected int size;
+	protected int order;
 
 	/**
-	 * Creates a new equation manager, which holds equations to count orbits of
-	 * the given order.
+	 * Creates a new equation manager, which holds equations to count orbits of the
+	 * given order.
 	 * 
 	 * @param order
-	 *            The order of the orbits to be counted with the equations in
-	 *            this equation manager.
+	 *            The order of the orbits to be counted with the equations in this
+	 *            equation manager.
 	 */
-	public EquationManager(int order/*, List<Equation> eqs*/) {
+	public EquationManager(int order/* , List<Equation> eqs */) {
 		// equ = new Equation[OrbitIdentification.getNOrbitsForOrder(order) -
 		// 1];
 		equ = new ArrayList<List<Equation>>(OrbitIdentification.getNOrbitsForOrder(order) - 1);
 		for (int i = 0; i < OrbitIdentification.getNOrbitsForOrder(order) - 1; i++) {
 			equ.add(new ArrayList<Equation>());
 		}
-		this.size = order;
-		/*for(Equation e:eqs){
-			addEquation(e);
-		}
-		finalise();*/
+		this.order = order;
+		/*
+		 * for(Equation e:eqs){ addEquation(e); } finalise();
+		 */
 		// equationsByRhs = new TreeMap<OrbitRepresentative, List<Equation>>();
 	}
-	
-	public void addAll(List<Equation> e){
-		for (Equation eq:e){
+
+	public void addAll(List<Equation> e) {
+		for (Equation eq : e) {
 			addEquation(eq);
 		}
 	}
 
 	/**
 	 * Tries to add an equation to the manager. If there is an equation with
-	 * identical graphlets in the left-hand side, the new equation will be
-	 * merged with it.
+	 * identical graphlets in the left-hand side, the new equation will be merged
+	 * with it.
 	 * 
 	 * 
 	 * @param e
 	 */
 	protected void addEquation(Equation e) {
-		int i = e.getLowestOrbit() - OrbitIdentification.getNOrbitsTotal(size - 1);
+		int i = e.getLowestOrbit() - OrbitIdentification.getNOrbitsTotal(order - 1);
 		// if (equ[i] == null) {
 		// equ[i] = e;
 		rhsOrbits.add(e.getRhsOrbit());
@@ -112,17 +111,17 @@ public class EquationManager {
 		// }
 		// return result;
 		if (finalEquations == null) {
-//			finalEquations = new ArrayList<Equation>();
-//			for (List<Equation> e : equ) {
-//				finalEquations.add(e.get(0));
-//			}
+			// finalEquations = new ArrayList<Equation>();
+			// for (List<Equation> e : equ) {
+			// finalEquations.add(e.get(0));
+			// }
 			finalise();
 		}
 		return finalEquations;
 	}
-	
-	protected void finalise(){
-//		System.out.println("ping1");
+
+	public void finalise() {
+		// System.out.println("ping1");
 		finalEquations = new ArrayList<Equation>();
 		for (List<Equation> e : equ) {
 			finalEquations.add(e.get(0));
@@ -137,7 +136,7 @@ public class EquationManager {
 			}
 			equationsByRhs.get(n).add(e);
 		}
-//		System.out.println(finalEquations);
+		// System.out.println(finalEquations);
 	}
 
 	/**
@@ -238,8 +237,61 @@ public class EquationManager {
 		}
 	}
 
-//	public static void main(String[] args) {
-//		OrbitIdentification.readGraphlets("Przulj.txt", 6);
-//		EquationGenerator.generateEquations(6).save("allequations.txt");
-//	}
+	// public static void main(String[] args) {
+	// OrbitIdentification.readGraphlets("Przulj.txt", 6
+	// EquationGenerator.generateEquations(6);
+	// }
+
+	public void toOrcaCode() {
+		for (int i = 4; i < 15; i++) {
+			System.out.println(i);
+			OrbitRepresentative or = OrbitIdentification.getOrbit(i);
+
+			List<Equation> l = equationsByRhs.get(or);
+			for (Equation e : l) {
+				System.out.print("f_" + e.getLowestOrbit() + " += ");
+				boolean done = false;
+				for (List<Integer> list : e.getRhsConnected()) {
+					if (done) {
+						System.out.print(" + ");
+					} else {
+						done = true;
+					}
+					if (list.size() == 1) {
+						int a = list.get(0);
+						System.out.print("deg[" + (a == 0 ? 'x' : (char) ('a' + a - 1)) + "]");
+					} else if (list.size() == 3) {
+						char a = list.get(0) == 0 ? 'x' : (char) ('a' + list.get(0) - 1);
+						char b = list.get(1) == 0 ? 'x' : (char) ('a' + list.get(1) - 1);
+						char c = list.get(2) == 0 ? 'x' : (char) ('a' + list.get(2) - 1);
+						System.out.print("common3_get(TRIPLE(" + a + "," + b + "," + c + "))");
+					} else if (list.size() == 2) {
+						char a = list.get(0) == 0 ? 'x' : (char) ('a' + list.get(0) - 1);
+						char b = list.get(1) == 0 ? 'x' : (char) ('a' + list.get(1) - 1);
+						System.out.print("common2_get(PAIR(" + a + "," + b + "))");
+					}
+
+				}
+				if (e.getMinus() != 0) {
+					System.out.print(" - " + e.getMinus());
+				}
+				System.out.println(";");
+			}
+			System.out.println();
+		}
+		for (int i=finalEquations.size()-1;i>=0;i--) {
+			Equation e = finalEquations.get(i);
+			System.out.print("orbit[x]["+e.getLowestOrbit()+"] = (f_"+e.getLowestOrbit());
+			int division = 1;
+			for(OrbitRepresentative or:e.getLhs().keySet()) {
+				if(or.identify()!=e.getLowestOrbit()) {
+					System.out.print("- " + e.getLhs().get(or) + " * orbit[x]["+or.identify()+"]");
+				}else {
+					division=e.getLhs().get(or);
+				}
+			}
+			System.out.println(")/"+division+";");
+		}
+	}
+
 }

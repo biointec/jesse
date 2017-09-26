@@ -6,8 +6,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -30,23 +32,22 @@ import tree.OrbitTree;
 public class Test {
 
 	public static void main(String[] args) throws Exception {
+		testType(5,100,10);
 //		OrbitIdentification.readGraphlets("Przulj.txt", 5);
-//		List<Equation> equations = EquationGenerator.generateEquations(5);
-//		Collections.sort(equations,new EquationComparator());
-//		EquationManager em = new SelectiveEquationManager(5, new RHSTermComparator(),true);
-//		em.addAll(equations);
-//		System.out.println(em.getEqu());
-////		System.out.println(new RHSTermComparator().compare(em.getEqu().get(0),em.getEqu().get(12)));
-////		System.out.println(new RHSTermComparator().compare(em.getEqu().get(12),em.getEqu().get(0)));
-		testType(5,100,1);
+//		List<Comparator<Equation>> comparators = new ArrayList<>();
+//		comparators.add(new RHSTermComparator());
+//		comparators.add(new RHSLengthComparator());
+//		EquationManager em = new SelectiveEquationManager(5, comparators,true);
+//		em.addAll(EquationGenerator.generateEquations(5));
+//		em.finalise();
+//		em.toOrcaCode();
 	}
 
 	public static void testType(int order, int graphorder, int times) {
 		long start;
 		// long result = 0;
 		for (int i = 0; i < times; i++) {
-//			DanglingGraph g = GraphReader.ErdosRenyi(graphorder, graphorder * 20);
-			DanglingGraph g = GraphReader.readGraph("example.out");
+			DanglingGraph g = GraphReader.ErdosRenyi(graphorder, graphorder * 10);
 			// System.out.println(g.size());
 			g.calculateCommons(order - 2);
 			OrbitIdentification.readGraphlets("Przulj.txt", order);
@@ -54,34 +55,37 @@ public class Test {
 			tree = new OrbitTree(order - 1);
 			DanglingInterpreter di = new DanglingInterpreter(g, tree, new EquationManager(order));
 			start = System.nanoTime();
+			List<Comparator<Equation>> comparators = new ArrayList<>();
+			comparators.add(new RHSTermComparator());
+			comparators.add(new RHSLengthComparator());
 			di.run();
 			System.out.print((System.nanoTime() - start) / 1e9);
 			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSTermComparator(), true));
 			start = System.nanoTime();
 			di.run();
 			System.out.print(" " + (System.nanoTime() - start) / 1e9);
-			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSTermComparator(), false));
-			start = System.nanoTime();
-			di.run();
-			System.out.print(" " + (System.nanoTime() - start) / 1e9);
-			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSLengthComparator(), true));
-			start = System.nanoTime();
-			di.run();
-			System.out.print(" " + (System.nanoTime() - start) / 1e9);
-			di = new DanglingInterpreter(g, tree,
-					new SelectiveEquationManager(order, new RHSLengthComparator(), false));
-			start = System.nanoTime();
-			di.run();
-			System.out.print(" " + (System.nanoTime() - start) / 1e9);
-			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new LHSLengthComparator(), true));
-			start = System.nanoTime();
-			di.run();
-			System.out.print(" " + (System.nanoTime() - start) / 1e9);
-			di = new DanglingInterpreter(g, tree,
-					new SelectiveEquationManager(order, new LHSLengthComparator(), false));
+			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order,comparators, true));
 			start = System.nanoTime();
 			di.run();
 			System.out.println(" " + (System.nanoTime() - start) / 1e9);
+//			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSLengthComparator(), true));
+//			start = System.nanoTime();
+//			di.run();
+//			System.out.print(" " + (System.nanoTime() - start) / 1e9);
+//			di = new DanglingInterpreter(g, tree,
+//					new SelectiveEquationManager(order, new RHSLengthComparator(), false));
+//			start = System.nanoTime();
+//			di.run();
+//			System.out.print(" " + (System.nanoTime() - start) / 1e9);
+//			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new LHSLengthComparator(), true));
+//			start = System.nanoTime();
+//			di.run();
+//			System.out.print(" " + (System.nanoTime() - start) / 1e9);
+//			di = new DanglingInterpreter(g, tree,
+//					new SelectiveEquationManager(order, new LHSLengthComparator(), false));
+//			start = System.nanoTime();
+//			di.run();
+//			System.out.println(" " + (System.nanoTime() - start) / 1e9);
 		}
 	}
 
