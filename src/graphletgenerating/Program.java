@@ -10,13 +10,13 @@ import java.util.Scanner;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import codegenerating.TaskMonitor;
+import progress.TaskMonitor;
 
 public class Program {
 
 	public static int order = 0;
+	
 	private static TaskMonitor taskMonitor;
-	private static boolean cancelled = false;
 
 	public static void main(String[] args) throws IOException {
 		int neworder=0;
@@ -76,9 +76,7 @@ public class Program {
 		System.out.println("Number of orbits: " + numberOrbits);
 	}
 
-	public static void generateGraphlets(int xx, String filename) throws IOException {
-		cancelled = false;
-		
+	public static void generateGraphlets(int xx, String filename) throws IOException {		
 		File psFile = new File(filename + ".txt");
 		File ps2File = new File(filename + ".ps");
 		PrintWriter ps2 = new PrintWriter(new BufferedWriter(new FileWriter(ps2File)));
@@ -102,7 +100,7 @@ public class Program {
 //					System.out.println("Iteration " + i + "/" + (int) Math.pow(2, array.length));
 				Graph graph = new Graph(array);
 				if (graph.isGraphlet()) {
-					if (cancelled) {
+					if (taskMonitor!=null && taskMonitor.isCancelled()) {
 						//clean up before cancelling
 						ps.close();
 						ps2.close();
@@ -146,11 +144,12 @@ public class Program {
 		}
 	}
 
+	/**
+	 * 
+	 * @param taskMonitor allow generateGraphlets() to report it progress and check for cancellation
+	 */
 	public static void setTaskMonitor(TaskMonitor taskMonitor) {
 		Program.taskMonitor = taskMonitor;
-	}
-	public static void cancel(){
-		cancelled = true;
 	}
 	
 }

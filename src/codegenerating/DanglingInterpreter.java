@@ -19,6 +19,7 @@ import graph.DanglingGraph;
 import graph.DanglingList;
 import orbits.OrbitIdentification;
 import orbits.OrbitRepresentative;
+import progress.TaskMonitor;
 import tree.AddEdgeNode;
 import tree.AddNodeNode;
 import tree.ConditionNode;
@@ -42,6 +43,8 @@ public class DanglingInterpreter implements TreeInterpreter {
 	private List<List<List<Integer>>> connections;
 	private List<List<Integer>> mingraphlet;
 	private List<List<Integer>> minus;
+	
+	private TaskMonitor taskMonitor;
 
 	/**
 	 * Creates a new DanglingInterpreter for the given graph, graphlet size and OrbitTree.
@@ -175,9 +178,17 @@ public class DanglingInterpreter implements TreeInterpreter {
 
 	@Override
 	public long[][] run() {
+		if (taskMonitor != null) {
+			taskMonitor.setProgress(0);
+			taskMonitor.setStatusMessage("Counting orbits");
+		}
 		ot.setInterpreter(this);
 		long[][] result = new long[g.order()][];
 		for (int i = 0; i < g.order(); i++) {
+			if (taskMonitor != null) {
+				taskMonitor.setProgress((double)i/g.order());
+				taskMonitor.setStatusMessage("Counting orbits for node "+i);
+			}
 			reset();
 			g.getNeighbors(i);
 			graphlet[0] = i;
@@ -188,6 +199,9 @@ public class DanglingInterpreter implements TreeInterpreter {
 			}
 			for (int j = 0; j < OrbitIdentification.getNOrbitsTotal(order - 1); j++) {
 				counts[j] /= OrbitIdentification.getOrbit(j).symmetry();
+				if (taskMonitor != null && taskMonitor.isCancelled()) {
+					return null;
+				}
 			}
 			for (int j = OrbitIdentification.getNOrbitsTotal(order + 1) - 2; j >= OrbitIdentification
 					.getNOrbitsTotal(order); j--) {
@@ -197,6 +211,9 @@ public class DanglingInterpreter implements TreeInterpreter {
 				while (it.hasNext()) {
 					OrbitRepresentative or = it.next();
 					counts[j] -= counts[or.identify()] * e.getLhs().get(or);
+					if (taskMonitor != null && taskMonitor.isCancelled()) {
+						return null;
+					}
 				}
 				counts[j] /= e.getLhs().get(OrbitIdentification.getOrbit(e.getLowestOrbit()));
 			}
@@ -250,6 +267,16 @@ public class DanglingInterpreter implements TreeInterpreter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	
+	/**
+	 * Set a task monitor the run() method can report its progress to
+	 * 
+	 * @param tm
+	 */
+	public void setTaskMonitor(TaskMonitor tm) {
+		this.taskMonitor = tm;
 	}
 
 }

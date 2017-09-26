@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
+import progress.TaskMonitor;
+
 
 public class OrbitIdentification {
 
@@ -21,6 +23,8 @@ public class OrbitIdentification {
 	public static List<Integer> graphletsPerSize;
 	public static List<Integer> totalPerSize;
 	private static Map<Set<Edge>,Integer> newOrbitNumbers;
+	
+	private static TaskMonitor taskMonitor;
 
 	public static final String DEFAULT_ORBIT_FILE = "/resources/Przulj.txt";
 	
@@ -34,6 +38,9 @@ public class OrbitIdentification {
 		totalPerSize = new ArrayList<Integer>();
 //		orbitNumbers = new HashMap<OrbitRepresentative, Integer>();
 		newOrbitNumbers=new HashMap<Set<Edge>,Integer>();
+		if (taskMonitor != null) {
+			taskMonitor.setProgress(0);
+		}
 		try {
 			Scanner scanner;
 			if (filename != null){
@@ -48,6 +55,10 @@ public class OrbitIdentification {
 			int orbitNumber = 0;
 			boolean first = true;
 			while (scanner.hasNextLine()&&size<=maxOrder) {
+				if (taskMonitor != null && taskMonitor.isCancelled()) {
+					scanner.close();
+					return;
+				}
 				String s = scanner.nextLine();
 				Set<Edge> set = new HashSet<Edge>();
 				int max = 0;
@@ -169,5 +180,9 @@ public class OrbitIdentification {
 		return permutedEdges;
 	}
 
+	public static void setTaskMonitor(TaskMonitor tm) {
+		taskMonitor = tm;
+	}
+	
 	
 }

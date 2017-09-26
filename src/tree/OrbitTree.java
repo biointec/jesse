@@ -19,6 +19,7 @@ import java.util.Set;
 import codegenerating.TreeInterpreter;
 import orbits.Edge;
 import orbits.OrbitRepresentative;
+import progress.TaskMonitor;
 
 /**
  * A tree in which the construction of orbit representatives is shown, starting
@@ -33,6 +34,8 @@ public class OrbitTree {
 	private int order;
 	private TreeInterpreter interpreter;
 	private Set<OrbitRepresentative> leaves;
+	
+	private TaskMonitor taskMonitor;
 
 	/**
 	 * Builds a new OrbitTree containing OrbitRepresentatives up to the given
@@ -46,7 +49,17 @@ public class OrbitTree {
 		buildTreeBFS();
 	}
 
-	private void buildTreeBFS() {
+	/**
+	 * Initialize an empty tree. Needs {@link setOrder()} and {@link buildTreeBFS()} to be called after.
+	 */
+	public OrbitTree() {
+	}
+	
+	public void buildTreeBFS() {
+		if (taskMonitor != null) {
+			taskMonitor.setProgress(0);
+			taskMonitor.setStatusMessage("Building orbit tree");
+		}
 		OrbitRepresentative o = new OrbitRepresentative();
 		root = new AddNodeNode(o,this);
 		OrbitRepresentative o2 = new OrbitRepresentative(o);
@@ -101,6 +114,9 @@ public class OrbitTree {
 						nextEdges.add(child);
 						parent.addChild(child,false);
 //						node1.addChild(index, child);
+						if (taskMonitor !=null && taskMonitor.isCancelled()) {
+							return;
+						}
 					}
 				}
 			}
@@ -359,4 +375,16 @@ public class OrbitTree {
 		return order;
 	}
 
+	/**
+	 * 
+	 * @param order The largest graphlet order in this tree.
+	 */
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
+	public void setTaskMonitor(TaskMonitor tm) {
+		this.taskMonitor = tm;
+	}
+	
 }
