@@ -73,17 +73,26 @@ public class OrbitTree {
 		nodes1.add(node);
 		for (int k = 2; k < order; k++) {
 			Deque<AddEdgeNode> nextEdges = new LinkedList<AddEdgeNode>();
-			Set<OrbitRepresentative> used = new HashSet<>();
+			Map<OrbitRepresentative,AddNodeNode> used = new HashMap<>();
 //			System.out.println(nodes1);
 			for (AddNodeNode node1 : nodes1) {
 				/* Add a first new layer of AddEdgeNode. */
 				OrbitRepresentative or = node1.getOrbitRepresentative();
-				if (used.contains(or)) {
+				if (used.containsKey(or)) {
 					/* Make sure each branch ends in an AddNodeNode. */
+//						AddNodeNode ann = used.get(or);
+//						AddNode oldparent = (AddNode)ann.getParent();
+//						AddNode newparent = (AddNode)node1.getParent(); 
+//					if(newparent.getOrbitRepresentative().compareTo(oldparent.getOrbitRepresentative())>0){
+//						ann.remove();
+//						ann.prune();
+//						used.put(or,node1);
+//					}else{
 					node1.remove();
 					node1.getParent().prune();
+//					}
 				} else {
-					used.add(or);
+					used.put(or,node1);
 					/*
 					 * Only connect to one node of each suborbit, the other
 					 * situations will get the same orbit representative anyway.
@@ -358,7 +367,19 @@ public class OrbitTree {
 		root.updateDepth();
 	}
 
-	
+//<<<<<<< HEAD
+//	
+//=======
+////	public static void main(String[] args) {
+////		OrbitIdentification.readGraphlets("Przulj.txt", 6);
+////		OrbitTree ot = new OrbitTree(4);
+////		ot.root.printTree("");
+//////		ot.write("treeText.txt");
+//////		OrbitTree read = new OrbitTree("treeText.txt");
+//////		System.out.println();
+//////		read.root.printTree("");
+////	}
+//>>>>>>> multiequations
 	
 	/**
 	 * Prints the tree in human-readable form to the console.

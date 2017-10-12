@@ -54,6 +54,7 @@ public class OrbitIdentification {
 			int size = 2;
 			int orbitNumber = 0;
 			boolean first = true;
+//			int x = 0;
 			while (scanner.hasNextLine()&&size<=maxOrder) {
 				if (taskMonitor != null && taskMonitor.isCancelled()) {
 					scanner.close();
@@ -89,6 +90,10 @@ public class OrbitIdentification {
 //				System.out.println(calculateSymmetry(og));
 				for(Set<Edge> e:calculateSymmetry(og)){
 					newOrbitNumbers.put(e, orbitNumber);
+//					if(x%1000==0){
+//						System.out.println(x);
+//					}
+//					x++;
 				}
 				orbitNumber++;
 			}

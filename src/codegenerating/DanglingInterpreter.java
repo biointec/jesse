@@ -49,17 +49,18 @@ public class DanglingInterpreter implements TreeInterpreter {
 	/**
 	 * Creates a new DanglingInterpreter for the given graph, graphlet size and OrbitTree.
 	 * @param g The graph in which the orbits are counted.
-	 * @param size The size of graphlets whose orbits are counted.
+	 * @param order The size of graphlets whose orbits are counted.
 	 * @param ot The orbit tree for counting.
 	 */
-	public DanglingInterpreter(DanglingGraph g, OrbitTree ot) {
+	public DanglingInterpreter(DanglingGraph g, OrbitTree ot, EquationManager em) {
 		this.g = g;
 		int size = ot.getOrder();
 		graphlet = new int[size];
 		counts = new long[OrbitIdentification.getNOrbitsTotal(size + 1)];
 		order = size;
 		this.ot = ot;
-		em = EquationGenerator.generateEquations(size + 1, ot.getLeaves());
+		this.em = em; 
+		em.addAll(EquationGenerator.generateEquations(size + 1, ot.getLeaves()));
 		nodes = new LinkedList<TreeNode>();
 		preprocessEquations();
 	}
@@ -108,7 +109,7 @@ public class DanglingInterpreter implements TreeInterpreter {
 			}
 			i++;
 		}
-		counts[counts.length - 1] += dl.getSize();
+		counts[counts.length - 1] += dl.size();
 		while (!elements.isEmpty()) {
 			dl.restore(elements.pop());
 		}
@@ -205,7 +206,7 @@ public class DanglingInterpreter implements TreeInterpreter {
 			}
 			for (int j = OrbitIdentification.getNOrbitsTotal(order + 1) - 2; j >= OrbitIdentification
 					.getNOrbitsTotal(order); j--) {
-				Equation e = em.getEqu()[j - OrbitIdentification.getNOrbitsTotal(order)];
+				Equation e = em.getEqu().get(j - OrbitIdentification.getNOrbitsTotal(order));
 				Iterator<OrbitRepresentative> it = e.getLhs().keySet().iterator();
 				it.next();
 				while (it.hasNext()) {

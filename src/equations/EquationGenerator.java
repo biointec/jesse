@@ -33,8 +33,9 @@ public class EquationGenerator {
 	}
 
 	
-	public static EquationManager generateEquations(int order, Collection<OrbitRepresentative> reps) {
-		EquationManager result = new EquationManager(order);
+	public static /*EquationManager */ List<Equation >generateEquations(int order, Collection<OrbitRepresentative> reps) {
+//		EquationManager result = new EquationManager(order);
+		List <Equation> result = new ArrayList<>();
 		for (OrbitRepresentative g : reps) {
 			assert(g.order()==order-1);
 			for (List<Integer> connections : commons(g.order())) {
@@ -47,12 +48,16 @@ public class EquationGenerator {
 				}
 				Equation e = new Equation(lhsGraphlets, lhs, g,
 						connections);
-				result.addEquation(e);
+				result.add(e);
 			}
 		}
-		result.sortEquations();
+//		result.sortEquations();
+//		result.save("equations.txt");
+//		System.out.println(result);
 		return result;
 	}
+	
+//	private void save(String name)
 	
 	/**
 	 * Generates all equations for counting graphlets of the given order.
@@ -62,7 +67,7 @@ public class EquationGenerator {
 	 *            resulting equations.
 	 * @return An EquationManager containing all equations.
 	 */
-	public static EquationManager generateEquations(int order){
+	public static List<Equation> generateEquations(int order){
 		return generateEquations(order,generateOrbits(order-1));
 	}
 

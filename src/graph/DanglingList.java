@@ -19,6 +19,7 @@ public class DanglingList<E extends Comparable<E>> implements Comparable<Danglin
 	private DanglingElement<E> tail;
 	private int size;
 	private int hashCode;
+	private long longHashCode;
 	private boolean ready;
 	private static int factor = 97;
 	private int ownFactor = 97;
@@ -153,7 +154,7 @@ public class DanglingList<E extends Comparable<E>> implements Comparable<Danglin
 	 * 
 	 * @return The number of elements in the list.
 	 */
-	public int getSize() {
+	public int size() {
 		return size;
 	}
 
@@ -201,7 +202,7 @@ public class DanglingList<E extends Comparable<E>> implements Comparable<Danglin
 		DanglingElement<E> a = head;
 		if (isEmpty()) {
 			add(element);
-		} else if (element.compareTo(head.getValue()) < 0) {
+		} else if (element.compareTo(head.getValue()) <= 0) {
 			addFirst(element);
 		} else if (element.compareTo(tail.getValue()) > 0) {
 			add(element);
@@ -210,7 +211,6 @@ public class DanglingList<E extends Comparable<E>> implements Comparable<Danglin
 			while (a != null && a.getValue().compareTo(element) < 0) {
 				a = a.getNext();
 			}
-
 			a.getPrevious().setNext(result);
 			result.setPrevious(a.getPrevious());
 			a.setPrevious(result);
@@ -226,15 +226,35 @@ public class DanglingList<E extends Comparable<E>> implements Comparable<Danglin
 		if (!ready || ownFactor!=factor) {
 			ownFactor = factor;
 			hashCode = 0;
+			longHashCode = 0l;
 			DanglingElement<E> e = head;
 			while (e != null) {
 				hashCode *= factor;
 				hashCode += e.hashCode();
+				longHashCode *= factor;
+				longHashCode += e.hashCode();
 				e = e.getNext();
 			}
 			ready = true;
 		}
 		return hashCode;
+	}
+	public long longHashCode() {
+		if (!ready || ownFactor!=factor) {
+			ownFactor = factor;
+			hashCode = 0;
+			longHashCode = 0l;
+			DanglingElement<E> e = head;
+			while (e != null) {
+				hashCode *= factor;
+				hashCode += e.hashCode();
+				longHashCode *= factor;
+				longHashCode += e.hashCode();
+				e = e.getNext();
+			}
+			ready = true;
+		}
+		return longHashCode;
 	}
 
 	@SuppressWarnings("unchecked")
