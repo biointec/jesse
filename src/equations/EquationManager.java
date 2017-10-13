@@ -13,7 +13,7 @@ public class EquationManager {
 
 	// private Equation[] equ;
 	protected List<List<Equation>> equ;
-	protected List<Equation> finalEquations;
+	protected Equation[] finalEquations;
 	protected SortedSet<OrbitRepresentative> rhsOrbits = new TreeSet<OrbitRepresentative>();
 	protected SortedMap<OrbitRepresentative, List<Equation>> equationsByRhs;
 	protected int order;
@@ -103,7 +103,7 @@ public class EquationManager {
 	 * 
 	 * @return An array containing this equation manager's equations.
 	 */
-	public List<Equation> getEqu() {
+	public Equation[] getEqu() {
 		// public List<List<Equation>> getEqu(){
 		// Equation [] result = new Equation[equ.size()];
 		// for(int i=0;i<equ.size();i++){
@@ -122,9 +122,9 @@ public class EquationManager {
 
 	public void finalise() {
 		// System.out.println("ping1");
-		finalEquations = new ArrayList<Equation>();
-		for (List<Equation> e : equ) {
-			finalEquations.add(e.get(0));
+		finalEquations =new Equation[OrbitIdentification.getNOrbitsForOrder(order)-1];
+		for (int i=0;i<equ.size();i++) {
+			finalEquations[i]=(equ.get(i).get(0));
 		}
 		equationsByRhs = new TreeMap<>();
 		for (Equation e : finalEquations) {
@@ -150,6 +150,7 @@ public class EquationManager {
 		return rhsOrbits;
 	}
 
+	@Override
 	public String toString() {
 		String result = "";
 		for (OrbitRepresentative og : rhsOrbits) {
@@ -279,8 +280,8 @@ public class EquationManager {
 			}
 			System.out.println();
 		}
-		for (int i=finalEquations.size()-1;i>=0;i--) {
-			Equation e = finalEquations.get(i);
+		for (int i=finalEquations.length-1;i>=0;i--) {
+			Equation e = finalEquations[i];
 			System.out.print("orbit[x]["+e.getLowestOrbit()+"] = (f_"+e.getLowestOrbit());
 			int division = 1;
 			for(OrbitRepresentative or:e.getLhs().keySet()) {

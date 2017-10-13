@@ -138,7 +138,6 @@ public class OrbitRepresentative implements Comparable<OrbitRepresentative> {
 		return result;
 	}
 
-
 	/**
 	 * Saves all orbit-graphlets that are isomorphic to this one. Calculating
 	 * isomorphism is done by changing the node names according to all possible
@@ -373,11 +372,13 @@ public class OrbitRepresentative implements Comparable<OrbitRepresentative> {
 		return order == or.order && edges.equals(or.edges);
 	}
 
+	@Override
 	public String toString() {
 		return "" + OrbitIdentification.identifyOrbit(this) + edges;
 	}
 
 //	@Override
+	@Override
 	public int compareTo(OrbitRepresentative o) {
 //		int a = OrbitIdentification.identifyOrbit(this);
 //		int b = OrbitIdentification.identifyOrbit(o);
@@ -453,17 +454,17 @@ public class OrbitRepresentative implements Comparable<OrbitRepresentative> {
 		return cosetreps;
 	}
 	
-	public static void main(String[] args){
-		OrbitIdentification.readGraphlets("Przulj.txt", 5);
-		System.out.println();
-		Set<Edge> edges = new HashSet<Edge>();
-
-		edges.add(new Edge(1,2));
-		edges.add(new Edge(0,2));
-		edges.add(new Edge(0,3));
-		edges.add(new Edge(3,4));
-		
-		OrbitRepresentative or = new OrbitRepresentative(edges,5);
-		System.out.println(or.getCosetreps());
-	}
+//	public static void main(String[] args){
+//		OrbitIdentification.readGraphlets("Przulj.txt", 5);
+//		System.out.println();
+//		Set<Edge> edges = new HashSet<Edge>();
+//
+//		edges.add(new Edge(1,2));
+//		edges.add(new Edge(0,2));
+//		edges.add(new Edge(0,3));
+//		edges.add(new Edge(3,4));
+//		
+//		OrbitRepresentative or = new OrbitRepresentative(edges,5);
+//		System.out.println(or.getCosetreps());
+//	}
 }

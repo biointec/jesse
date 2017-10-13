@@ -110,6 +110,7 @@ public class Equation {
 			minus += e.minus;
 	}
 
+	@Override
 	public String toString() {
 
 		if (EquationGenerator.latex) {

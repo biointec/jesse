@@ -128,6 +128,7 @@ public class Graph {
 	/**
 	 * Returns the string representation of this graphlet.
 	 */
+	@Override
 	public String toString() {
 		StringBuilder ret = new StringBuilder();
 		for (int i = 1; i < matrix.length; i++) {

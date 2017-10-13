@@ -164,6 +164,7 @@ public class AddEdgeNode extends AddNode implements Comparable<AddEdgeNode> {
 		tree.getInterpreter().addEdgeAction(this);
 	}
 
+	@Override
 	StringBuffer write(){
 		StringBuffer result = new StringBuffer();
 		
@@ -186,6 +187,7 @@ public class AddEdgeNode extends AddNode implements Comparable<AddEdgeNode> {
 		return result;
 	}
 	
+	@Override
 	void prune(){
 		if(truechild == null&&falsechild == null){
 			remove();

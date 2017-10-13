@@ -130,6 +130,7 @@ public class AddNodeNode extends AddNode implements Comparable<AddNodeNode> {
 		}
 	}
 	
+	@Override
 	StringBuffer write(){
 		StringBuffer result = new StringBuffer();
 		

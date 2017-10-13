@@ -8,31 +8,25 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
 import equations.Equation;
-import equations.EquationComparator;
-import equations.EquationGenerator;
 import equations.EquationManager;
-import equations.LHSLengthComparator;
 import equations.RHSLengthComparator;
 import equations.RHSTermComparator;
 import equations.SelectiveEquationManager;
 import graph.DanglingGraph;
 import graph.GraphReader;
-import graphletgenerating.Program;
 import orbits.OrbitIdentification;
 import tree.OrbitTree;
 
 public class Test {
 
 	public static void main(String[] args) throws Exception {
-		testType(5,100,10);
+//		testType(6,100,10);
 //		OrbitIdentification.readGraphlets("Przulj.txt", 5);
 //		List<Comparator<Equation>> comparators = new ArrayList<>();
 //		comparators.add(new RHSTermComparator());
@@ -41,6 +35,7 @@ public class Test {
 //		em.addAll(EquationGenerator.generateEquations(5));
 //		em.finalise();
 //		em.toOrcaCode();
+		test("data/Pu.txt", 6);
 	}
 
 	public static void testType(int order, int graphorder, int times) {
@@ -50,7 +45,7 @@ public class Test {
 			DanglingGraph g = GraphReader.ErdosRenyi(graphorder, graphorder * 10);
 			// System.out.println(g.size());
 			g.calculateCommons(order - 2);
-			OrbitIdentification.readGraphlets("Przulj.txt", order);
+			OrbitIdentification.readGraphlets("data/Przulj.txt", order);
 			OrbitTree tree;
 			tree = new OrbitTree(order - 1);
 			DanglingInterpreter di = new DanglingInterpreter(g, tree, new EquationManager(order));
@@ -171,7 +166,7 @@ public class Test {
 		OrbitTree tree;
 		tree = new OrbitTree(order - 1);
 		// tree.getRoot().printTree("");
-		DanglingInterpreter di = new DanglingInterpreter(g, tree, new EquationManager(order));
+		DanglingInterpreter di = new DanglingInterpreter(g, tree);
 		System.out.print((System.nanoTime() - start) * 1e-9 + "\t");
 		start = System.nanoTime();
 		long[][] result = di.run();
@@ -193,10 +188,10 @@ public class Test {
 					System.out.println(i);
 				}
 			}
-			System.out.println(Arrays.toString(result1));
-			System.out.println(Arrays.toString(result2));
 
 		}
+			System.out.println(Arrays.toString(result1));
+			System.out.println(Arrays.toString(result2));
 		// System.out.println(OrbitIdentification.getNOrbitsTotal(order));
 	}
 	// tree.getRoot().printTree("");

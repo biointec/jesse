@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.TreeMap;
 
+import orbits.OrbitIdentification;
 import orbits.OrbitRepresentative;
 
 public class SelectiveEquationManager extends EquationManager {
@@ -26,10 +27,11 @@ public class SelectiveEquationManager extends EquationManager {
 		this.direction = direction;
 	}
 
+	@Override
 	public void finalise() {
-		finalEquations = new ArrayList<Equation>();
+		finalEquations = new Equation[OrbitIdentification.getNOrbitsForOrder(order)-1];
 		// System.out.println("ping");
-		for (List<Equation> es : equ) {
+		for (int j = 0;j<equ.size();j++) {
 			// Equation e =(es.get(0));
 			// for(Equation ee:es){
 			//// if(ee.getLowestOrbit()==42)
@@ -39,7 +41,7 @@ public class SelectiveEquationManager extends EquationManager {
 			// }
 			// }
 			// finalEquations.add(e);
-			List<Equation> currentset = new ArrayList<>(es);
+			List<Equation> currentset = new ArrayList<>(equ.get(j));
 			List<Equation> nextset = new ArrayList<>();
 			int i = 0;
 			while (currentset.size() > 1 && i < criteria.size()) {
@@ -56,7 +58,7 @@ public class SelectiveEquationManager extends EquationManager {
 				currentset = nextset;
 				nextset = new ArrayList<>();
 			}
-			finalEquations.add(currentset.get(0));
+			finalEquations[j]=(currentset.get(0));
 		}
 		equationsByRhs = new TreeMap<>();
 		for (Equation e : finalEquations) {

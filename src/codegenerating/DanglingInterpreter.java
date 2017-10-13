@@ -14,6 +14,8 @@ import java.util.Stack;
 import equations.Equation;
 import equations.EquationGenerator;
 import equations.EquationManager;
+import equations.RHSTermComparator;
+import equations.SelectiveEquationManager;
 import graph.DanglingElement;
 import graph.DanglingGraph;
 import graph.DanglingList;
@@ -66,6 +68,11 @@ public class DanglingInterpreter implements TreeInterpreter {
 	}
 
 	
+	public DanglingInterpreter(DanglingGraph g, OrbitTree tree) {
+		this(g, tree, new SelectiveEquationManager(tree.getOrder()+1, new RHSTermComparator(), true));
+	}
+
+
 	private void reset() {
 		graphlet = new int[order];
 		counts = new long[OrbitIdentification.getNOrbitsTotal(order + 1)];
@@ -206,7 +213,7 @@ public class DanglingInterpreter implements TreeInterpreter {
 			}
 			for (int j = OrbitIdentification.getNOrbitsTotal(order + 1) - 2; j >= OrbitIdentification
 					.getNOrbitsTotal(order); j--) {
-				Equation e = em.getEqu().get(j - OrbitIdentification.getNOrbitsTotal(order));
+				Equation e = em.getEqu()[j - OrbitIdentification.getNOrbitsTotal(order)];
 				Iterator<OrbitRepresentative> it = e.getLhs().keySet().iterator();
 				it.next();
 				while (it.hasNext()) {
