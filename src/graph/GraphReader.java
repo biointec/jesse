@@ -69,6 +69,7 @@ public class GraphReader {
 		return result;
 	}
 	
+	
 	public static DanglingGraph barabasiAlbert(int nNodes, int edgesPerNode){
 		DanglingGraph result = new DanglingGraph();
 		List<Integer>degrees = new ArrayList<>();
