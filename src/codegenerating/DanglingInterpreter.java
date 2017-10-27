@@ -229,6 +229,52 @@ public class DanglingInterpreter implements TreeInterpreter {
 		}
 		return result;
 	}
+	
+	public long[][] run(List<Integer> l) {
+		if (taskMonitor != null) {
+			taskMonitor.setProgress(0);
+			taskMonitor.setStatusMessage("Counting orbits");
+		}
+		ot.setInterpreter(this);
+		long[][] result = new long[g.order()][];
+		for (int z = 0; z < l.size(); z++) {
+			int i=l.get(z);
+			if (taskMonitor != null) {
+				taskMonitor.setProgress((double)z/l.size());
+				taskMonitor.setStatusMessage("Counting orbits for node "+i);
+			}
+			reset();
+			g.getNeighbors(i);
+			graphlet[0] = i;
+			nodes.addLast(ot.getRoot());
+			while (!nodes.isEmpty()) {
+				TreeNode tn = nodes.removeFirst();
+				tn.walkTree();
+			}
+			for (int j = 0; j < OrbitIdentification.getNOrbitsTotal(order - 1); j++) {
+				counts[j] /= OrbitIdentification.getOrbit(j).symmetry();
+				if (taskMonitor != null && taskMonitor.isCancelled()) {
+					return null;
+				}
+			}
+			for (int j = OrbitIdentification.getNOrbitsTotal(order + 1) - 2; j >= OrbitIdentification
+					.getNOrbitsTotal(order); j--) {
+				Equation e = em.getEqu()[j - OrbitIdentification.getNOrbitsTotal(order)];
+				Iterator<OrbitRepresentative> it = e.getLhs().keySet().iterator();
+				it.next();
+				while (it.hasNext()) {
+					OrbitRepresentative or = it.next();
+					counts[j] -= counts[or.identify()] * e.getLhs().get(or);
+					if (taskMonitor != null && taskMonitor.isCancelled()) {
+						return null;
+					}
+				}
+				counts[j] /= e.getLhs().get(OrbitIdentification.getOrbit(e.getLowestOrbit()));
+			}
+			result[i] = counts;
+		}
+		return result;
+	}
 
 	private void preprocessEquations() {
 		connections = new ArrayList<>(OrbitIdentification.getNOrbitsForOrder(order));
