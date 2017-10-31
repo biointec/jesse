@@ -77,11 +77,11 @@ public class Program {
 	}
 
 	public static void generateGraphlets(int xx, String filename) throws IOException {		
-		File psFile = new File(filename + ".txt");
-		File ps2File = new File(filename + ".ps");
-		PrintWriter ps2 = new PrintWriter(new BufferedWriter(new FileWriter(ps2File)));
-		PrintWriter ps = new PrintWriter(new BufferedWriter(new FileWriter(psFile)));
-		ps.append("%!PS\n/Times-Roman findfont\n10 scalefont\nsetfont\n");
+		File txtFile = new File(filename + ".txt");
+		File psFile = new File(filename + ".ps");
+		PrintWriter psWriter = new PrintWriter(new BufferedWriter(new FileWriter(psFile)));
+		PrintWriter txtWriter = new PrintWriter(new BufferedWriter(new FileWriter(txtFile)));
+		psWriter.append("%!PS\n/Times-Roman findfont\n10 scalefont\nsetfont\n");
 
 		int numberOrbits = 0;
 		for (int j = 2; j <= xx; j++) {
@@ -96,35 +96,30 @@ public class Program {
 
 			SortedSet<String> reps = new TreeSet<String>();
 			for (int i = 0; i < Math.pow(2, array.length); i++) {
-//				if (i % 1000 == 0)
-//					System.out.println("Iteration " + i + "/" + (int) Math.pow(2, array.length));
 				Graph graph = new Graph(array);
 				if (graph.isGraphlet()) {
 					if (taskMonitor!=null && taskMonitor.isCancelled()) {
 						//clean up before cancelling
-						ps.close();
-						ps2.close();
+						txtWriter.close();
+						psWriter.close();
+						txtFile.delete();
 						psFile.delete();
-						ps2File.delete();
 						return;
 					}
 					SortedSet<String> orbits = graph.permute(reps);
 					if (orbits != null) {
 						reps.add(graph.toString());
 						numberOrbits = numberOrbits + orbits.size();
-						ps.append(graph.toPS());
-						ps2.append(graph.toGraphlet());
-//						System.out.println(graph);
+						psWriter.append(graph.toPS());
+						txtWriter.append(graph.toGraphlet());
 					}
 				}
 				incArray(array);
 			}
 		}
 
-		ps.close();
-		ps2.close();
-//		System.out.println("Number of graphlets: " + numberGraphlets);
-//		System.out.println("Number of orbits: " + numberOrbits);
+		txtWriter.close();
+		psWriter.close();
 	}
 
 	/**
