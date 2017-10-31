@@ -62,33 +62,35 @@ public class Test {
 //			}
 //		}
 		for (int i = 150; i < 250; i+=50) {
-			for (int j = 8; j < 13; j +=2) {
+//			for ( int j = 1; j < 5; j +=2) {
+			int j=3;
+				for (double r = 0.05; r < 0.20; r += .05) {
+//					speeddifferenceGeo(5, iterations, i, j, Math.pow(r, 1./j));
+					if(i!=150 || r!=.05)
+					speeddifferenceGeo(6, iterations, i, j, Math.pow(r, 1./j));
+//					speeddifferenceGeo(7, iterations, i, j, Math.pow(r, 1./j));
+				}
+//			}
+		}
+		for (int i = 200; i < 250; i+=50) {
+			for (int j = 9; j < 13; j +=2) {
 //				speeddifferenceBA(5, iterations, i, j);
 				speeddifferenceBA(6, iterations, i, j);
 //				speeddifferenceER(7, iterations, i, j);
 			}
 		}
 		for (int i = 100; i < 250; i+=50) {
-//			for ( int j = 1; j < 5; j +=2) {
-			int j=3;
-				for (double r = 0.05; r < 0.20; r += .05) {
-//					speeddifferenceGeo(5, iterations, i, j, Math.pow(r, 1./j));
-					speeddifferenceGeo(6, iterations, i, j, Math.pow(r, 1./j));
-//					speeddifferenceGeo(7, iterations, i, j, Math.pow(r, 1./j));
-				}
-//			}
-		}for (int i = 100; i < 250; i+=50) {
 			for (int j = i * 8; j < i * 13; j += i) {
 //				speeddifferenceER(5, iterations, i, j);
 //				speeddifferenceER(6, iterations, i, j);
-				speeddifferenceER(7, iterations, i, j);
+				speeddifferenceER(7, 1, i, j);
 			}
 		}
 		for (int i = 100; i < 250; i+=50) {
 			for (int j = 8; j < 13; j ++) {
 //				speeddifferenceBA(5, iterations, i, j);
 //				speeddifferenceBA(6, iterations, i, j);
-				speeddifferenceER(7, iterations, i, j);
+				speeddifferenceER(7, 1, i, j);
 			}
 		}
 		for (int i = 100; i < 250; i+=50) {
@@ -96,7 +98,7 @@ public class Test {
 				for (double r = 0.05; r < 0.25; r += .05) {
 //					speeddifferenceGeo(5, iterations, i, j, Math.pow(r, 1./j));
 //					speeddifferenceGeo(6, iterations, i, j, Math.pow(r, 1./j));
-					speeddifferenceGeo(7, iterations, i, j, Math.pow(r, 1./j));
+					speeddifferenceGeo(7, 1, i, j, Math.pow(r, 1./j));
 				}
 			}
 		}
