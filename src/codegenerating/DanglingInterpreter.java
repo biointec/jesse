@@ -236,7 +236,7 @@ public class DanglingInterpreter implements TreeInterpreter {
 			taskMonitor.setStatusMessage("Counting orbits");
 		}
 		ot.setInterpreter(this);
-		long[][] result = new long[g.order()][];
+		long[][] result = new long[l.size()][];
 		for (int z = 0; z < l.size(); z++) {
 			int i=g.getNodeNumber(l.get(z));
 			if (taskMonitor != null) {
@@ -271,7 +271,7 @@ public class DanglingInterpreter implements TreeInterpreter {
 				}
 				counts[j] /= e.getLhs().get(OrbitIdentification.getOrbit(e.getLowestOrbit()));
 			}
-			result[i] = counts;
+			result[z] = counts;
 		}
 		return result;
 	}

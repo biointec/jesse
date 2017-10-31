@@ -35,7 +35,25 @@ public class Test {
 //		em.addAll(EquationGenerator.generateEquations(5));
 //		em.finalise();
 //		em.toOrcaCode();
-		test("data/Pu.txt", 6);
+//		test("data/Pu.txt", 6);
+		List<String> a = new ArrayList<String>();
+		a.add("1");
+		a.add("2");
+		testLijst(5,100,a);
+	}
+	
+	public static void testLijst(int order,int graphorder,List<String> l) {
+		DanglingGraph g = GraphReader.ErdosRenyi(graphorder, graphorder * 10);
+		// System.out.println(g.size());
+		g.calculateCommons(order - 2);
+		OrbitIdentification.readGraphlets("data/Przulj.txt", order);
+		OrbitTree tree;
+		tree = new OrbitTree(order - 1);
+		DanglingInterpreter di = new DanglingInterpreter(g, tree, new EquationManager(order));
+		long[][] a =di.run(l);
+		for(long[]x :a) {
+			System.out.println(Arrays.toString(x));
+		}
 	}
 
 	public static void testType(int order, int graphorder, int times) {
