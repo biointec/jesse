@@ -230,7 +230,7 @@ public class DanglingInterpreter implements TreeInterpreter {
 		return result;
 	}
 	
-	public long[][] run(List<Integer> l) {
+	public long[][] run(List<String> l) {
 		if (taskMonitor != null) {
 			taskMonitor.setProgress(0);
 			taskMonitor.setStatusMessage("Counting orbits");
@@ -238,7 +238,7 @@ public class DanglingInterpreter implements TreeInterpreter {
 		ot.setInterpreter(this);
 		long[][] result = new long[g.order()][];
 		for (int z = 0; z < l.size(); z++) {
-			int i=l.get(z);
+			int i=g.getNodeNumber(l.get(z));
 			if (taskMonitor != null) {
 				taskMonitor.setProgress((double)z/l.size());
 				taskMonitor.setStatusMessage("Counting orbits for node "+i);

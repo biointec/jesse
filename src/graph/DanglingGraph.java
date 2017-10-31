@@ -362,4 +362,8 @@ public class DanglingGraph {
 			e.printStackTrace();
 		}
 	}
+	
+	public int getNodeNumber(String s) {
+		return inverseNodeNames.get(s);
+	}
 }
