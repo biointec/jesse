@@ -20,6 +20,7 @@ import java.util.Set;
 
 import codegenerating.TreeInterpreter;
 import orbits.Edge;
+import orbits.OrbitIdentification;
 import orbits.OrbitRepresentative;
 import progress.TaskMonitor;
 
@@ -62,6 +63,7 @@ public class OrbitTree {
 			taskMonitor.setProgress(0);
 			taskMonitor.setStatusMessage("Building orbit tree");
 		}
+		int counter = 0;
 		OrbitRepresentative o = new OrbitRepresentative();
 		root = new AddNodeNode(o,this);
 		OrbitRepresentative o2 = new OrbitRepresentative(o);
@@ -78,6 +80,9 @@ public class OrbitTree {
 			Map<OrbitRepresentative,AddNodeNode> used = new HashMap<>();
 //			System.out.println(nodes1);
 			for (AddNodeNode node1 : nodes1) {
+				if (taskMonitor !=null && taskMonitor.isCancelled()) {
+					return;
+				}
 				/* Add a first new layer of AddEdgeNode. */
 				OrbitRepresentative or = node1.getOrbitRepresentative();
 				if (used.containsKey(or)) {
@@ -94,6 +99,12 @@ public class OrbitTree {
 					node1.getParent().prune();
 //					}
 				} else {
+					counter++;
+					if(taskMonitor!=null) {
+						taskMonitor.setProgress((double)(counter)/OrbitIdentification.getNOrbitsTotal(order));
+					}
+					System.out.println((double)(counter)/OrbitIdentification.getNOrbitsTotal(order));
+					
 					used.put(or,node1);
 					/*
 					 * Only connect to one node of each suborbit, the other
@@ -125,15 +136,16 @@ public class OrbitTree {
 						nextEdges.add(child);
 						parent.addChild(child,false);
 //						node1.addChild(index, child);
-						if (taskMonitor !=null && taskMonitor.isCancelled()) {
-							return;
-						}
+						
 					}
 				}
 			}
 			nodes1 = new LinkedList<AddNodeNode>();
 //			System.out.println(nextEdges);
 			while (!nextEdges.isEmpty()) {
+				if (taskMonitor !=null && taskMonitor.isCancelled()) {
+					return;
+				}
 				AddEdgeNode node2 = nextEdges.pollFirst();
 				int edge = node2.getEdge();
 				OrbitRepresentative or = node2.getOrbitRepresentative();
@@ -175,8 +187,16 @@ public class OrbitTree {
 		}
 		leaves = new HashSet<>();
 		for (AddNodeNode n : nodes1) {
+			if (taskMonitor !=null && taskMonitor.isCancelled()) {
+				return;
+			}
 			OrbitRepresentative or = n.getOrbitRepresentative();
 			if (leaves.add(or)) {
+					counter++;
+				if(taskMonitor!=null) {
+					taskMonitor.setProgress((double)(counter)/OrbitIdentification.getNOrbitsTotal(order));
+				}
+				System.out.println((double)(counter)/OrbitIdentification.getNOrbitsTotal(order));
 				/*
 				 * Break the OrbitRepresentative's symmetry and add the needed
 				 * ConditionNodes for the restraints.
@@ -397,4 +417,8 @@ public class OrbitTree {
 		this.taskMonitor = tm;
 	}
 	
+	public static void main(String[]args) {
+		OrbitIdentification.readGraphlets(null, 6);
+		OrbitTree ot = new OrbitTree(6);
+	}
 }
