@@ -230,6 +230,12 @@ public class DanglingInterpreter implements TreeInterpreter {
 		return result;
 	}
 	
+	/**
+	 * Count orbits
+	 * 
+	 * @param l a subset of the graph's nodes (by node id) for which orbits should be counted.
+	 * @return a matrix with orbit counts for each selected node. Rows are in the same order as the given list {@link l}
+	 */
 	public long[][] run(List<String> l) {
 		if (taskMonitor != null) {
 			taskMonitor.setProgress(0);
