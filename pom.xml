@@ -78,6 +78,24 @@
 					<goal>update-project-license</goal>
 				</goals>
 			</execution>
+			<execution>
+				<id>headers</id>
+				<configuration>
+					<inceptionYear>2017</inceptionYear>
+					<organizationName>Intec/UGent - Ine Melckenbeeck</organizationName>
+					<canUpdateCopyright>false</canUpdateCopyright>
+					<projectName>Jesse</projectName>
+					<licenseName>gpl_v3</licenseName>
+					<verbose>true</verbose>
+					<roots>
+						<root>src</root>
+					</roots>
+				</configuration>
+				<phase>process-sources</phase>
+				<goals>
+					<goal>update-file-header</goal>
+				</goals>
+			</execution>
 		</executions>
 	</plugin>
     </plugins>
@@ -109,6 +127,9 @@
 									<goals>
 										<goal>
 											update-project-license
+										</goal>
+										<goal>
+											update-file-header
 										</goal>
 									</goals>
 								</pluginExecutionFilter>
