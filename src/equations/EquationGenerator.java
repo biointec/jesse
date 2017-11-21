@@ -1,7 +1,10 @@
 package equations;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.*;
 
+import orbits.OrbitIdentification;
 import orbits.OrbitRepresentative;
 
 
@@ -32,6 +35,7 @@ public class EquationGenerator {
 		return orbits;
 	}
 
+	
 	
 	public static /*EquationManager */ List<Equation >generateEquations(int order, Collection<OrbitRepresentative> reps) {
 //		EquationManager result = new EquationManager(order);

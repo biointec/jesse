@@ -26,7 +26,7 @@ import tree.OrbitTree;
 public class Test {
 
 	public static void main(String[] args) throws Exception {
-//		testType(6,100,10);
+		testType(7,50,10);
 //		OrbitIdentification.readGraphlets("Przulj.txt", 5);
 //		List<Comparator<Equation>> comparators = new ArrayList<>();
 //		comparators.add(new RHSTermComparator());
@@ -36,10 +36,10 @@ public class Test {
 //		em.finalise();
 //		em.toOrcaCode();
 //		test("data/Pu.txt", 6);
-		List<String> a = new ArrayList<String>();
-		a.add("1");
-		a.add("2");
-		testLijst(5,100,a);
+//		List<String> a = new ArrayList<String>();
+//		a.add("1");
+//		a.add("2");
+//		testLijst(5,100,a);
 	}
 	
 	public static void testLijst(int order,int graphorder,List<String> l) {

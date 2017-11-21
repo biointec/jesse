@@ -1,6 +1,7 @@
 package equations;
 
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -40,6 +41,17 @@ public class EquationManager {
 		// equationsByRhs = new TreeMap<OrbitRepresentative, List<Equation>>();
 	}
 
+	public static void main(String[]args) throws FileNotFoundException {
+		OrbitIdentification.readGraphlets(null, 6);
+		PrintWriter pw= new PrintWriter("data/equations.txt");
+		EquationManager em = new EquationManager(5);
+		em.addAll(EquationGenerator.generateEquations(5));
+		em.finalise();
+		pw.println(em);
+		pw.close();
+	}
+	
+	
 	public void addAll(List<Equation> e) {
 		for (Equation eq : e) {
 			addEquation(eq);
