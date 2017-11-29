@@ -26,7 +26,9 @@ import tree.OrbitTree;
 public class Test {
 
 	public static void main(String[] args) throws Exception {
-		testType(7,50,10);
+//		testType(5,75,20);
+		testType(6,75,20);
+//		testType(7,75,20);
 //		OrbitIdentification.readGraphlets("Przulj.txt", 5);
 //		List<Comparator<Equation>> comparators = new ArrayList<>();
 //		comparators.add(new RHSTermComparator());
@@ -43,7 +45,7 @@ public class Test {
 	}
 	
 	public static void testLijst(int order,int graphorder,List<String> l) {
-		DanglingGraph g = GraphReader.ErdosRenyi(graphorder, graphorder * 10);
+		DanglingGraph g = GraphReader.ErdosRenyi(graphorder, graphorder/10);
 		// System.out.println(g.size());
 		g.calculateCommons(order - 2);
 		OrbitIdentification.readGraphlets("data/Przulj.txt", order);
@@ -60,7 +62,7 @@ public class Test {
 		long start;
 		// long result = 0;
 		for (int i = 0; i < times; i++) {
-			DanglingGraph g = GraphReader.ErdosRenyi(graphorder, graphorder * 10);
+			DanglingGraph g = GraphReader.ErdosRenyi(graphorder, graphorder*10);
 			// System.out.println(g.size());
 			g.calculateCommons(order - 2);
 			OrbitIdentification.readGraphlets("data/Przulj.txt", order);
@@ -73,14 +75,20 @@ public class Test {
 			comparators.add(new RHSLengthComparator());
 			di.run();
 			System.out.print((System.nanoTime() - start) / 1e9);
+			System.out.print(" "+g.numberOfCalls);
+			g.numberOfCalls=0;
 			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSTermComparator(), true));
 			start = System.nanoTime();
 			di.run();
 			System.out.print(" " + (System.nanoTime() - start) / 1e9);
-			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order,comparators, true));
+			System.out.print(" "+g.numberOfCalls);
+			g.numberOfCalls=0;
+			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order,new RHSTermComparator(), false));
 			start = System.nanoTime();
 			di.run();
-			System.out.println(" " + (System.nanoTime() - start) / 1e9);
+			System.out.print(" " + (System.nanoTime() - start) / 1e9);
+			System.out.println(" "+g.numberOfCalls);
+			g.numberOfCalls=0;
 //			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSLengthComparator(), true));
 //			start = System.nanoTime();
 //			di.run();

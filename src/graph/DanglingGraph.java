@@ -19,11 +19,13 @@ import java.util.Stack;
  *
  */
 public class DanglingGraph {
+	
+	public long numberOfCalls = 0;
 
 	private List<DanglingList<Integer>> nodes;
 	private List<String> nodeNames;
 	private Map<String, Integer> inverseNodeNames;
-	// private Map<DanglingList<Integer>, Integer> nCommon;
+//	 private Map<DanglingList<Integer>, Integer> nCommon;
 
 	private Map<Long, Integer> nCommon;
 	private List<Map<DanglingList<Integer>,Integer>> commonsBySize;
@@ -161,7 +163,7 @@ public class DanglingGraph {
 		// System.out.println(number);
 		// }
 		// // int mapsize = (int) number;
-		// nCommon = new HashMap<DanglingList<Integer>, Integer>(39174100);
+//		 nCommon = new HashMap<DanglingList<Integer>, Integer>(39174100);
 		nCommon = new HashMap<Long, Integer>();
 		commonsBySize = new ArrayList<Map<DanglingList<Integer>,Integer>>();
 		//
@@ -193,6 +195,7 @@ public class DanglingGraph {
 					elements = nodes.get(counters[0]);
 					DanglingList<Integer> l = new DanglingList<Integer>();
 					l.add(counters[0]);
+//					nCommon.put(l, nodes.get(counters[0]).size());
 					nCommon.put(l.longHashCode(), nodes.get(counters[0]).size());
 					commonsBySize.get(index).put(new DanglingList<Integer>(l), nodes.get(counters[0]).size());
 					if (size > 1) {
@@ -206,6 +209,7 @@ public class DanglingGraph {
 						for (int i = 0; i < size; i++) {
 							l.add(counters[i]);
 						}
+//						nCommon.put(l, elements.size());
 						nCommon.put(l.longHashCode(), elements.size());
 						commonsBySize.get(index).put(new DanglingList<Integer>(l), elements.size());
 					}
@@ -222,6 +226,7 @@ public class DanglingGraph {
 						for (int i = 0; i < index + 1; i++) {
 							l.add(counters[i]);
 						}
+//						nCommon.put(l, elements.size());
 						nCommon.put(l.longHashCode(), elements.size());
 						commonsBySize.get(index).put(new DanglingList<Integer>(l), elements.size());
 						index++;
@@ -279,10 +284,12 @@ public class DanglingGraph {
 	 * @return The number of common neighbors of the nodes.
 	 */
 	public int getNCommon(DanglingList<Integer> l) {
-//		Integer a = nCommon.get(l.longHashCode());
+		numberOfCalls++;
 		if(l.size()==0) return 0;
 		if(l.size()==1) return nodes.get(l.getHead().getValue()).size();
-		Integer a = commonsBySize.get(l.size()-1).get(l);
+//		Integer a = nCommon.get(l);
+		Integer a = nCommon.get(l.longHashCode());
+//		Integer a = commonsBySize.get(l.size()-1).get(l);
 		return a == null ? 0 : a;
 		// return 0;
 	}
