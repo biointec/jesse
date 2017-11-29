@@ -31,20 +31,22 @@ public class DanglingGraph {
 	private List<Map<DanglingList<Integer>,Integer>> commonsBySize;
 	private long[] sizes;
 	private boolean[][] matrix;
-	//private int size;
+	private int size;
+	public int ncommon = 0;
 
 	/**
 	 * Creates a new DanglingGraph, without any nodes or edges.
 	 */
 	public DanglingGraph() {
 		sizes = new long[0];
-		//size = 0;
+		size = 0;
 		nodeNames = new ArrayList<String>(0);
 		nodes = new ArrayList<DanglingList<Integer>>();
 		inverseNodeNames = new HashMap<String, Integer>();
 		matrix = null;
 		nCommon = null;
 		commonsBySize = null;
+//		nCommon = null;
 	}
 
 	/**
@@ -91,6 +93,7 @@ public class DanglingGraph {
 
 		nodes.get(n1).addInOrder(n2);
 		nodes.get(n2).addInOrder(n1);
+		size++;
 	}
 
 	/**
@@ -135,9 +138,9 @@ public class DanglingGraph {
 
 	
 
-	//public int size() {
-	//	return size;
-	//}
+	public int size() {
+		return size;
+	}
 
 	private static long combination(int n, int m) {
 		long result = 1;
@@ -167,6 +170,7 @@ public class DanglingGraph {
 		nCommon = new HashMap<Long, Integer>();
 		commonsBySize = new ArrayList<Map<DanglingList<Integer>,Integer>>();
 		//
+		int[][]distance = floydWarshall();
 		sizes = new long[size + 1];
 		for (int i = 1; i <= size; i++) {
 			sizes[i] += sizes[i - 1] + combination(nodes.size(), i);
@@ -180,7 +184,7 @@ public class DanglingGraph {
 		int[] numbers = new int[size];
 		Stack<DanglingElement<Integer>> removed = new Stack<>();
 		DanglingList<Integer> elements = new DanglingList<>();
-		while (counters[0] < nodes.size() - 1 || index != 0) {
+		outer: while (counters[0] < nodes.size() - 1 || index != 0) {
 			counters[index]++;
 			if (counters[index] >= nodes.size()) {
 				for (int i = 0; i < numbers[index - 1]; i++) {
@@ -198,20 +202,26 @@ public class DanglingGraph {
 //					nCommon.put(l, nodes.get(counters[0]).size());
 					nCommon.put(l.longHashCode(), nodes.get(counters[0]).size());
 					commonsBySize.get(index).put(new DanglingList<Integer>(l), nodes.get(counters[0]).size());
+
 					if (size > 1) {
 						counters[1] = counters[0];
 						index = 1;
 					}
 				} else if (index == size - 1) {
+					for(int i=0;i<index;i++){
+						if(distance[counters[i]][counters[index]] > size + 2){
+							continue outer;
+						}
+					}
 					Stack<DanglingElement<Integer>> rest = elements.crossSection(nodes.get(counters[index]));
 					if (!elements.isEmpty()) {
 						DanglingList<Integer> l = new DanglingList<Integer>();
 						for (int i = 0; i < size; i++) {
 							l.add(counters[i]);
 						}
-//						nCommon.put(l, elements.size());
 						nCommon.put(l.longHashCode(), elements.size());
 						commonsBySize.get(index).put(new DanglingList<Integer>(l), elements.size());
+
 					}
 					while (!rest.isEmpty()) {
 						elements.restore(rest.pop());
@@ -229,6 +239,7 @@ public class DanglingGraph {
 //						nCommon.put(l, elements.size());
 						nCommon.put(l.longHashCode(), elements.size());
 						commonsBySize.get(index).put(new DanglingList<Integer>(l), elements.size());
+
 						index++;
 						counters[index] = counters[index - 1];
 					} else {

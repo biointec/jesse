@@ -114,6 +114,7 @@ public class CountingInterpreter implements TreeInterpreter {
 		ot.setInterpreter(this);
 		long[][]result = new long[g.order()][];
 		for (int i = 0; i < g.order(); i++) {
+//		int i=0;
 			reset();
 			graphlet[0] = i;
 			ot.getRoot().walkTree();

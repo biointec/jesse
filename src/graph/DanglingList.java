@@ -234,8 +234,10 @@ public class DanglingList<E extends Comparable<E>> implements Comparable<Danglin
 				longHashCode *= factor;
 				longHashCode += e.hashCode();
 				e = e.getNext();
+//				System.out.println(hashCode);
 			}
 			ready = true;
+//			System.out.println();
 		}
 		return hashCode;
 	}
@@ -335,22 +337,29 @@ public class DanglingList<E extends Comparable<E>> implements Comparable<Danglin
 		return new DanglingIterator<E>(this);
 	}
 	
+	public boolean contains(E i){
+		for(E a: this){
+			if(a.equals(i)){
+				return true;
+			}
+			if(a.compareTo(i)>0){
+				return false;
+			}
+		}
+		return false;
+	}
+	
 	
 //	public static void main(String[]args){
 //		DanglingList<Integer> a = new DanglingList<Integer>();
 //		for(int i=0;i<20;i+=2){
 //			a.addInOrder(i);
 //		}
-//		DanglingList<Integer> b = new DanglingList<Integer>();
-//		for(int i=0;i<20;i+=3){
-//			b.addInOrder(i);
-//		}
-//		List<DanglingElement<Integer>> rest = a.crossSection(b);
-//		System.out.println(rest);
 //		System.out.println(a);
-//		for(DanglingElement<Integer> element:rest){
-//			a.restore(element);
-//		}
-//		System.out.println(a);
+//		System.out.println(a.contains(2));
+//		System.out.println(a.contains(5));
+//		System.out.println(a.contains(18));
+//		System.out.println(a.contains(-1));
+//		System.out.println(a.contains(21));
 //	}
 }

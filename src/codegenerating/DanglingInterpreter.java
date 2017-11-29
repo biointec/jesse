@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -139,8 +140,10 @@ public class DanglingInterpreter implements TreeInterpreter {
 				for (int i : l) {
 					dl.addInOrder(graphlet[i]);
 				}
+//				if(mingraphlet.get(index).get(j)==404)System.out.println(g.getNCommon(dl));
 				int a = mingraphlet.get(index).get(j);
 				counts[a] += g.getNCommon(dl);
+//				if(counts[a]< 0)System.out.println(a+","+counts[a]);
 				assert (counts[a] >= 0);
 				counts[a] -= minus.get(index).get(j);
 			}
@@ -197,6 +200,7 @@ public class DanglingInterpreter implements TreeInterpreter {
 				taskMonitor.setProgress((double)i/g.order());
 				taskMonitor.setStatusMessage("Counting orbits for node "+i);
 			}
+//		int i=0;
 			reset();
 			g.getNeighbors(i);
 			graphlet[0] = i;
@@ -213,6 +217,7 @@ public class DanglingInterpreter implements TreeInterpreter {
 			}
 			for (int j = OrbitIdentification.getNOrbitsTotal(order + 1) - 2; j >= OrbitIdentification
 					.getNOrbitsTotal(order); j--) {
+				
 				Equation e = em.getEqu()[j - OrbitIdentification.getNOrbitsTotal(order)];
 				Iterator<OrbitRepresentative> it = e.getLhs().keySet().iterator();
 				it.next();
