@@ -36,18 +36,18 @@ import tree.OrbitTree;
 public class UI {
 
 	/**
-	 * For searches up to this order, the orbits and orbit trees are
-	 * pre-calculated and packaged along with the application.
+	 * For searches up to this order, the orbits and orbit trees are pre-calculated
+	 * and packaged along with the application.
 	 */
 	public static final int CACHED_ORDER = 7;
-	
+
 	/**
 	 * Locations for {@link OrbitTree} files can be constructed as follow:
-	 * 	ORBIT_TREE_FILE+String.valueOf(order)
+	 * ORBIT_TREE_FILE+String.valueOf(order)
 	 */
 	public static final String ORBIT_TREE_FILE = "/resources/tree-";
 
-	public static void main(String[] args){
+	public static void main(String[] args) {
 
 		Scanner s = new Scanner(System.in);
 
@@ -93,7 +93,7 @@ public class UI {
 				treeName = s.next();
 			}
 		} else {
-			if (order <= CACHED_ORDER){
+			if (order <= CACHED_ORDER) {
 				System.out.println("Do you want to use the standard file for the orbit tree? (y/n)");
 				if (s.next().toLowerCase().charAt(0) != 'y') {
 					System.out.println("Enter the file name for the orbit tree:");
@@ -104,16 +104,19 @@ public class UI {
 				treeName = s.next();
 			}
 		}
-
+		System.out.println(
+				"Do you want to save the orbit representative instances instead of the number?\nNote: this will NOT use equations for speedup. (y/n)");
+		boolean saveInstances = s.next().toLowerCase().charAt(0) == 'y';
 		System.out.println("Enter the file name for the graph:");
 		String graphname = s.next();
 		System.out.println("Enter the file name for the results:");
 		String resultname = s.next();
 		s.close();
-		run(generate, order, orbitname, generateTree, saveTree, treeName, graphname, resultname);
+		run(generate, order, orbitname, generateTree, saveTree, saveInstances, treeName, graphname, resultname);
 	}
-	
-	public static void run(boolean generate,int order,String orbitname, boolean generateTree, boolean saveTree, String treeName, String graphname, String resultname){
+
+	public static void run(boolean generate, int order, String orbitname, boolean generateTree, boolean saveTree,
+			boolean saveInstances, String treeName, String graphname, String resultname) {
 		long start;
 		if (generate) {
 			System.out.println("Generating graphlets...");
@@ -134,16 +137,19 @@ public class UI {
 		if (generateTree) {
 			System.out.println("Generating tree...");
 			start = System.nanoTime();
-			tree = new OrbitTree(order - 1);
+			if (saveInstances)
+				tree = new OrbitTree(order);
+			else
+				tree = new OrbitTree(order - 1);
 			System.out.println("Generated tree in " + (System.nanoTime() - start) * 1e-9 + "s");
 			if (saveTree) {
 				tree.write(treeName);
 			}
 		} else {
-			if (treeName != ""){
-				tree = new OrbitTree(treeName);				
+			if (treeName != "") {
+				tree = new OrbitTree(treeName);
 			} else {
-				URL url = OrbitTree.class.getResource(ORBIT_TREE_FILE+String.valueOf(order));
+				URL url = OrbitTree.class.getResource(ORBIT_TREE_FILE + String.valueOf(order));
 				tree = new OrbitTree(url);
 			}
 		}
@@ -151,20 +157,24 @@ public class UI {
 		start = System.nanoTime();
 		DanglingGraph g = GraphReader.readGraph(graphname);
 		System.out.println("Read graph in " + (System.nanoTime() - start) * 1e-9 + "s");
-		System.out.println("Calculating common neighbours...");
-		start = System.nanoTime();
-		g.calculateCommons(order - 2);
-		System.out.println("Calculated common neighbours in " + +(System.nanoTime() - start) * 1e-9 + "s");
-		DanglingInterpreter di = new DanglingInterpreter(g,  tree,new EquationManager(order));
+		TreeInterpreter di;
+		if (!saveInstances) {
+			System.out.println("Calculating common neighbours...");
+			start = System.nanoTime();
+			g.calculateCommons(order - 2);
+			System.out.println("Calculated common neighbours in " + +(System.nanoTime() - start) * 1e-9 + "s");
+			di = new DanglingInterpreter(g, tree, new EquationManager(order),resultname);
+		}else {
+			di = new ListInterpreter(g,tree,resultname);
+		}
 		System.out.println("Counting orbits...");
 		start = System.nanoTime();
 		long[][] result = di.run();
 		System.out.println("Counted orbits in " + +(System.nanoTime() - start) * 1e-9 + "s");
-		System.out.println("Saving results...");
-		start = System.nanoTime();
-		di.write(resultname, result);
-		System.out.println("Saved results in " + +(System.nanoTime() - start) * 1e-9 + "s");
+//		System.out.println("Saving results...");
+//		start = System.nanoTime();
+//		di.write(resultname, result);
+//		System.out.println("Saved results in " + +(System.nanoTime() - start) * 1e-9 + "s");
 	}
-	
 
 }

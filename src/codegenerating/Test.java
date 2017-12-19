@@ -58,10 +58,13 @@ public class Test {
 //		em.finalise();
 //		em.toOrcaCode();
 //		test("data/Pu.txt", 6);
-		List<String> a = new ArrayList<String>();
-		a.add("1");
-		a.add("2");
-		testLijst(5,100,a);
+		DanglingGraph.setLists(true);
+		DanglingGraph g = GraphReader.readGraph("data/Test.txt");
+		g.calculateCommons(3);
+		OrbitIdentification.readGraphlets(null,5);
+		OrbitTree tree = new OrbitTree(5);
+		ListInterpreter li = new ListInterpreter(g,tree,"data/Test.out");
+		li.run();
 	}
 	
 	public static void testLijst(int order,int graphorder,List<String> l) {

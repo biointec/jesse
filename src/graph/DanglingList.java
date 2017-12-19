@@ -45,6 +45,7 @@ public class DanglingList<E extends Comparable<E>> implements Comparable<Danglin
 	private boolean ready;
 	private static int factor = 97;
 	private int ownFactor = 97;
+	private E maximum;
 
 	/**
 	 * Creates a new, empty DanglingList.
@@ -54,6 +55,7 @@ public class DanglingList<E extends Comparable<E>> implements Comparable<Danglin
 		tail = null;
 		size = 0;
 		ready = false;
+		maximum=null;
 	}
 
 	/**
@@ -65,6 +67,11 @@ public class DanglingList<E extends Comparable<E>> implements Comparable<Danglin
 		this();
 		addAll(elements);
 	}
+	
+	public DanglingList(E[] elements) {
+		this();
+		addAll(elements);
+	}
 
 	/**
 	 * Adds all elements from the Iterable to the DanglingList in the order they
@@ -73,6 +80,12 @@ public class DanglingList<E extends Comparable<E>> implements Comparable<Danglin
 	 * @param elements
 	 */
 	public void addAll(Iterable<E> elements) {
+		for (E i : elements) {
+			add(i);
+		}
+		ready = false;
+	}
+	public void addAll(E[] elements) {
 		for (E i : elements) {
 			add(i);
 		}
@@ -92,6 +105,11 @@ public class DanglingList<E extends Comparable<E>> implements Comparable<Danglin
 		} else {
 			tail.setNext(e);
 			e.setPrevious(tail);
+		}
+		if(maximum == null) {
+			maximum=element;
+		}else if(maximum.compareTo(element)<0) {
+			maximum = element;
 		}
 		tail = e;
 		size++;
@@ -357,6 +375,60 @@ public class DanglingList<E extends Comparable<E>> implements Comparable<Danglin
 		return new DanglingIterator<E>(this);
 	}
 	
+	public DanglingList<E> combine(DanglingList<E> other){
+		DanglingElement<E> a = getHead();
+		DanglingElement<E> b = other.getHead();
+		DanglingList<E> result = new DanglingList<>();
+		while(a!=null && b != null) {
+			if(a.getValue().compareTo(b.getValue())<=0) {
+				result.add(a.getValue());
+				a=a.getNext();
+			}else {
+				result.add(b.getValue());
+				b=b.getNext();
+			}
+		}
+		while(a!=null) {
+			result.add(a.getValue());
+			a=a.getNext();
+		}
+		while(b!=null) {
+			result.add(b.getValue());
+			b=b.getNext();
+		}
+		return result;
+	}
+	
+	public DanglingList<E> difference(DanglingList<E> other){
+		DanglingElement<E> a = getHead();
+		DanglingElement<E> b = other.getHead();
+		DanglingList<E> result = new DanglingList<>();
+		while(a!=null && b != null) {
+			if(a.getValue().compareTo(b.getValue())>0) {
+				b=b.getNext();
+			}else if(a.getValue().compareTo(b.getValue())<0) {
+				result.add(a.getValue());
+				a=a.getNext();
+			}else {
+				a=a.getNext();
+				b=b.getNext();
+			}
+		}
+		while(a!=null) {
+			result.add(a.getValue());
+			a=a.getNext();
+		}
+		return result;
+	}
+	
+	public boolean contains(E e) {
+		for (E i : this) {
+			if(i.equals(e)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 //	public static void main(String[]args){
 //		DanglingList<Integer> a = new DanglingList<Integer>();

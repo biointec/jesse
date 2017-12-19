@@ -23,10 +23,12 @@ package codegenerating;
  */
 
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -67,6 +69,7 @@ public class DanglingInterpreter implements TreeInterpreter {
 	private List<List<List<Integer>>> connections;
 	private List<List<Integer>> mingraphlet;
 	private List<List<Integer>> minus;
+	private String filename = null;
 	
 	private TaskMonitor taskMonitor;
 
@@ -86,6 +89,19 @@ public class DanglingInterpreter implements TreeInterpreter {
 		this.em = em; 
 		em.addAll(EquationGenerator.generateEquations(size + 1, ot.getLeaves()));
 		nodes = new LinkedList<TreeNode>();
+		preprocessEquations();
+	}
+	public DanglingInterpreter(DanglingGraph g, OrbitTree ot, EquationManager em, String filename) {
+		this.g = g;
+		int size = ot.getOrder();
+		graphlet = new int[size];
+		counts = new long[OrbitIdentification.getNOrbitsTotal(size + 1)];
+		order = size;
+		this.ot = ot;
+		this.em = em; 
+		em.addAll(EquationGenerator.generateEquations(size + 1, ot.getLeaves()));
+		nodes = new LinkedList<TreeNode>();
+		this.filename=filename;
 		preprocessEquations();
 	}
 
@@ -208,48 +224,49 @@ public class DanglingInterpreter implements TreeInterpreter {
 
 	@Override
 	public long[][] run() {
-		if (taskMonitor != null) {
-			taskMonitor.setProgress(0);
-			taskMonitor.setStatusMessage("Counting orbits");
-		}
-		ot.setInterpreter(this);
-		long[][] result = new long[g.order()][];
-		for (int i = 0; i < g.order(); i++) {
-			if (taskMonitor != null) {
-				taskMonitor.setProgress((double)i/g.order());
-				taskMonitor.setStatusMessage("Counting orbits for node "+i);
-			}
-			reset();
-			g.getNeighbors(i);
-			graphlet[0] = i;
-			nodes.addLast(ot.getRoot());
-			while (!nodes.isEmpty()) {
-				TreeNode tn = nodes.removeFirst();
-				tn.walkTree();
-			}
-			for (int j = 0; j < OrbitIdentification.getNOrbitsTotal(order - 1); j++) {
-				counts[j] /= OrbitIdentification.getOrbit(j).symmetry();
-				if (taskMonitor != null && taskMonitor.isCancelled()) {
-					return null;
-				}
-			}
-			for (int j = OrbitIdentification.getNOrbitsTotal(order + 1) - 2; j >= OrbitIdentification
-					.getNOrbitsTotal(order); j--) {
-				Equation e = em.getEqu()[j - OrbitIdentification.getNOrbitsTotal(order)];
-				Iterator<OrbitRepresentative> it = e.getLhs().keySet().iterator();
-				it.next();
-				while (it.hasNext()) {
-					OrbitRepresentative or = it.next();
-					counts[j] -= counts[or.identify()] * e.getLhs().get(or);
-					if (taskMonitor != null && taskMonitor.isCancelled()) {
-						return null;
-					}
-				}
-				counts[j] /= e.getLhs().get(OrbitIdentification.getOrbit(e.getLowestOrbit()));
-			}
-			result[i] = counts;
-		}
-		return result;
+//		if (taskMonitor != null) {
+//			taskMonitor.setProgress(0);
+//			taskMonitor.setStatusMessage("Counting orbits");
+//		}
+//		ot.setInterpreter(this);
+//		long[][] result = new long[g.order()][];
+//		for (int i = 0; i < g.order(); i++) {
+//			if (taskMonitor != null) {
+//				taskMonitor.setProgress((double)i/g.order());
+//				taskMonitor.setStatusMessage("Counting orbits for node "+i);
+//			}
+//			reset();
+//			g.getNeighbors(i);
+//			graphlet[0] = i;
+//			nodes.addLast(ot.getRoot());
+//			while (!nodes.isEmpty()) {
+//				TreeNode tn = nodes.removeFirst();
+//				tn.walkTree();
+//			}
+//			for (int j = 0; j < OrbitIdentification.getNOrbitsTotal(order - 1); j++) {
+//				counts[j] /= OrbitIdentification.getOrbit(j).symmetry();
+//				if (taskMonitor != null && taskMonitor.isCancelled()) {
+//					return null;
+//				}
+//			}
+//			for (int j = OrbitIdentification.getNOrbitsTotal(order + 1) - 2; j >= OrbitIdentification
+//					.getNOrbitsTotal(order); j--) {
+//				Equation e = em.getEqu()[j - OrbitIdentification.getNOrbitsTotal(order)];
+//				Iterator<OrbitRepresentative> it = e.getLhs().keySet().iterator();
+//				it.next();
+//				while (it.hasNext()) {
+//					OrbitRepresentative or = it.next();
+//					counts[j] -= counts[or.identify()] * e.getLhs().get(or);
+//					if (taskMonitor != null && taskMonitor.isCancelled()) {
+//						return null;
+//					}
+//				}
+//				counts[j] /= e.getLhs().get(OrbitIdentification.getOrbit(e.getLowestOrbit()));
+//			}
+//			result[i] = counts;
+//		}
+//		return result;
+		return run(g.getNodeNames());
 	}
 	
 	/**
@@ -258,17 +275,33 @@ public class DanglingInterpreter implements TreeInterpreter {
 	 * @param l a subset of the graph's nodes (by node id) for which orbits should be counted.
 	 * @return a matrix with orbit counts for each selected node. Rows are in the same order as the given list {@link l}
 	 */
-	public long[][] run(List<String> l) {
+	public long[][] run(Collection<String> l) {
 		if (taskMonitor != null) {
 			taskMonitor.setProgress(0);
 			taskMonitor.setStatusMessage("Counting orbits");
 		}
 		ot.setInterpreter(this);
-		long[][] result = new long[l.size()][];
-		for (int z = 0; z < l.size(); z++) {
-			int i=g.getNodeNumber(l.get(z));
+		long [][] result=null;
+		PrintWriter pw=null;
+		if(filename==null) {
+			
+			result = new long[l.size()][];
+		}else {
+			try {
+				pw = new PrintWriter(filename);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				pw = null;
+				result = new long[l.size()][];
+			}
+		}
+//		for (int z = 0; z < l.size(); z++) {
+//			int i=g.getNodeNumber(l.get(z));
+		int counter = 0;
+		for(String z:l) {
+			int i = g.getNodeNumber(z);
 			if (taskMonitor != null) {
-				taskMonitor.setProgress((double)z/l.size());
+				taskMonitor.setProgress((double)(counter++)/l.size());
 				taskMonitor.setStatusMessage("Counting orbits for node "+i);
 			}
 			reset();
@@ -299,7 +332,18 @@ public class DanglingInterpreter implements TreeInterpreter {
 				}
 				counts[j] /= e.getLhs().get(OrbitIdentification.getOrbit(e.getLowestOrbit()));
 			}
-			result[z] = counts;
+			if(pw==null) {
+				result[counter] = counts;
+			}else {
+				pw.print(z);
+				for(long j :counts) {
+					pw.print("\t"+j);
+				}
+				pw.println();
+			}
+		}
+		if(pw!=null) {
+			pw.close();
 		}
 		return result;
 	}
@@ -334,22 +378,7 @@ public class DanglingInterpreter implements TreeInterpreter {
 	}
 
 
-	public void write(String filename, long[][] result) {
-		try {
-			PrintWriter ps = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
-
-			for (int i = 0; i < result.length; i++) {
-				ps.print(g.getName(i));
-				for (int j = 0; j < result[i].length; j++) {
-					ps.print("\t" + result[i][j]);
-				}
-				ps.println();
-			}
-			ps.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+	
 
 	
 	/**
