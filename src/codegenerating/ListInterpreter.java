@@ -119,13 +119,9 @@ public class ListInterpreter implements TreeInterpreter {
 			List<Set<Integer>> sym = ann.getOrbitRepresentative().getCosetreps();
 
 			boolean ok = true;
-			System.out.println(sym);
 //			System.out.println();
 			for (int j=0;j<sym.size();j++) {
 				for(int i : sym.get(j)) {
-					if(ann.getRepID()==44) {
-						System.out.println(i+" "+j);
-					}
 					ok = ok && (graphlet[i] > graphlet[j+1]);
 				}
 			}
