@@ -17,6 +17,7 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
+import equations.ActiveEquationManager;
 import equations.Equation;
 import equations.EquationManager;
 import equations.RHSLengthComparator;
@@ -32,61 +33,101 @@ import tree.OrbitTree;
 public class Test {
 
 	public static void main(String[] args) throws Exception {
-		for(int k=5;k<8;k++) {
-			for(int n =50;n<250;n+=50) {
-				for(int m = 8;m<13;m+=2) {
-					testTypeBA(k,n,m,20);
-					testTypeER(k,n,n*m,20);
-				}
-				for(double r = .05;r<.25;r+=.05) {
-					testTypeGeo(k,n,r,20);
-				}
+		
+		for (int n = 50; n < 220; n += 50) {
+			int max = ( (n - 1)) / 2;
+			int step = max / 10;
+			for (int m = step; m < max; m += step) {
+				testTypeBA(5, n, m, 20);
 			}
 		}
-//		testTypeBA(5,75,20);
-//		testTypeBA(6,75,20);
-//		testTypeBA(7,75,20);
-//		testTypeGeo(5,75,20);
-//		testTypeGeo(6,75,20);
-//		testTypeGeo(7,75,20);
-//		testTypeER(5,75,20);
-//		testTypeER(6,75,20);
-//		testTypeER(7,75,20);
-//		OrbitIdentification.readGraphlets("Przulj.txt", 5);
-//		List<Comparator<Equation>> comparators = new ArrayList<>();
-//		comparators.add(new RHSTermComparator());
-//		comparators.add(new RHSLengthComparator());
-//		EquationManager em = new SelectiveEquationManager(5, comparators,true);
-//		em.addAll(EquationGenerator.generateEquations(5));
-//		em.finalise();
-//		em.toOrcaCode();
-//		test("data/Pu.txt", 6);
-//		List<String> a = new ArrayList<String>();
-//		a.add("1");
-//		a.add("2");
-//		testLijst(5,100,a);
+		for(int n=50;n<220;n+=50) {
+			for (double i=.1;i<1;i+=.1) {
+				testTypeGeo(5, n, Math.pow(.75/Math.PI*i, 1/3.), 1);
+			}
+		}
 	}
-	
-	public static void testLijst(int order,int graphorder,List<String> l) {
-		DanglingGraph g = GraphReader.ErdosRenyi(graphorder, graphorder/10);
+
+	public static void testLijst(int order, int graphorder, List<String> l) {
+		DanglingGraph g = GraphReader.ErdosRenyi(graphorder, graphorder / 10);
 		// System.out.println(g.size());
 		g.calculateCommons(order - 2);
 		OrbitIdentification.readGraphlets("data/Przulj.txt", order);
 		OrbitTree tree;
 		tree = new OrbitTree(order - 1);
 		DanglingInterpreter di = new DanglingInterpreter(g, tree, new EquationManager(order));
-		long[][] a =di.run(l);
-		for(long[]x :a) {
+		long[][] a = di.run(l);
+		for (long[] x : a) {
 			System.out.println(Arrays.toString(x));
 		}
+	}
+
+	public static void testSmallParts(int order, int graphorder, int subgraphorder, int times)
+			throws FileNotFoundException {
+		long start;
+		// long result = 0;
+		PrintWriter pw = new PrintWriter("choiceSP-" + order + "-" + graphorder + "-" + subgraphorder + ".txt");
+		System.out.println("ER " + order);
+
+		for (int i = 0; i < times; i++) {
+			System.out.println(i);
+			DanglingGraph g = GraphReader.smallPartsGraph(graphorder, subgraphorder);
+			// pw.println(g.size());
+			g.calculateCommons(order - 2);
+			OrbitIdentification.readGraphlets("data/Przulj.txt", order);
+			OrbitTree tree;
+			tree = new OrbitTree(order - 1);
+			DanglingInterpreter di = new DanglingInterpreter(g, tree, new RandomEquationManager(order));
+			start = System.nanoTime();
+			List<Comparator<Equation>> comparators = new ArrayList<>();
+			comparators.add(new RHSTermComparator());
+			comparators.add(new RHSLengthComparator());
+			di.run();
+			pw.print((System.nanoTime() - start) / 1e9);
+			pw.print(" " + g.numberOfCalls);
+			g.numberOfCalls = 0;
+			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSTermComparator(), true));
+			start = System.nanoTime();
+			di.run();
+			pw.print(" " + (System.nanoTime() - start) / 1e9);
+			pw.print(" " + g.numberOfCalls);
+			g.numberOfCalls = 0;
+			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSTermComparator(), false));
+			start = System.nanoTime();
+			di.run();
+			pw.print(" " + (System.nanoTime() - start) / 1e9);
+			pw.println(" " + g.numberOfCalls);
+			g.numberOfCalls = 0;
+			// di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new
+			// RHSLengthComparator(), true));
+			// start = System.nanoTime();
+			// di.run();
+			// pw.print(" " + (System.nanoTime() - start) / 1e9);
+			// di = new DanglingInterpreter(g, tree,
+			// new SelectiveEquationManager(order, new RHSLengthComparator(), false));
+			// start = System.nanoTime();
+			// di.run();
+			// pw.print(" " + (System.nanoTime() - start) / 1e9);
+			// di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new
+			// LHSLengthComparator(), true));
+			// start = System.nanoTime();
+			// di.run();
+			// pw.print(" " + (System.nanoTime() - start) / 1e9);
+			// di = new DanglingInterpreter(g, tree,
+			// new SelectiveEquationManager(order, new LHSLengthComparator(), false));
+			// start = System.nanoTime();
+			// di.run();
+			// pw.println(" " + (System.nanoTime() - start) / 1e9);
+		}
+		pw.close();
 	}
 
 	public static void testTypeER(int order, int graphorder, int graphsize, int times) throws FileNotFoundException {
 		long start;
 		// long result = 0;
-		PrintWriter pw = new PrintWriter("choiceER-"+order+"-"+graphorder+"-"+graphsize+".txt");
-		System.out.println("ER "+order);
-		
+		PrintWriter pw = new PrintWriter("choiceER-" + order + "-" + graphorder + "-" + graphsize + ".txt");
+		System.out.println("ER " + order);
+
 		for (int i = 0; i < times; i++) {
 			System.out.println(i);
 			DanglingGraph g = GraphReader.ErdosRenyi(graphorder, graphsize);
@@ -102,47 +143,50 @@ public class Test {
 			comparators.add(new RHSLengthComparator());
 			di.run();
 			pw.print((System.nanoTime() - start) / 1e9);
-			pw.print(" "+g.numberOfCalls);
-			g.numberOfCalls=0;
+			pw.print(" " + g.numberOfCalls);
+			g.numberOfCalls = 0;
 			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSTermComparator(), true));
 			start = System.nanoTime();
 			di.run();
 			pw.print(" " + (System.nanoTime() - start) / 1e9);
-			pw.print(" "+g.numberOfCalls);
-			g.numberOfCalls=0;
-			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order,new RHSTermComparator(), false));
+			pw.print(" " + g.numberOfCalls);
+			g.numberOfCalls = 0;
+			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSTermComparator(), false));
 			start = System.nanoTime();
 			di.run();
 			pw.print(" " + (System.nanoTime() - start) / 1e9);
-			pw.println(" "+g.numberOfCalls);
-			g.numberOfCalls=0;
-//			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSLengthComparator(), true));
-//			start = System.nanoTime();
-//			di.run();
-//			pw.print(" " + (System.nanoTime() - start) / 1e9);
-//			di = new DanglingInterpreter(g, tree,
-//					new SelectiveEquationManager(order, new RHSLengthComparator(), false));
-//			start = System.nanoTime();
-//			di.run();
-//			pw.print(" " + (System.nanoTime() - start) / 1e9);
-//			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new LHSLengthComparator(), true));
-//			start = System.nanoTime();
-//			di.run();
-//			pw.print(" " + (System.nanoTime() - start) / 1e9);
-//			di = new DanglingInterpreter(g, tree,
-//					new SelectiveEquationManager(order, new LHSLengthComparator(), false));
-//			start = System.nanoTime();
-//			di.run();
-//			pw.println(" " + (System.nanoTime() - start) / 1e9);
+			pw.println(" " + g.numberOfCalls);
+			g.numberOfCalls = 0;
+			// di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new
+			// RHSLengthComparator(), true));
+			// start = System.nanoTime();
+			// di.run();
+			// pw.print(" " + (System.nanoTime() - start) / 1e9);
+			// di = new DanglingInterpreter(g, tree,
+			// new SelectiveEquationManager(order, new RHSLengthComparator(), false));
+			// start = System.nanoTime();
+			// di.run();
+			// pw.print(" " + (System.nanoTime() - start) / 1e9);
+			// di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new
+			// LHSLengthComparator(), true));
+			// start = System.nanoTime();
+			// di.run();
+			// pw.print(" " + (System.nanoTime() - start) / 1e9);
+			// di = new DanglingInterpreter(g, tree,
+			// new SelectiveEquationManager(order, new LHSLengthComparator(), false));
+			// start = System.nanoTime();
+			// di.run();
+			// pw.println(" " + (System.nanoTime() - start) / 1e9);
 		}
 		pw.close();
 	}
-	public static void testTypeBA(int order, int graphorder, int graphdegree, int times) throws IOException{
+
+	public static void testTypeBA(int order, int graphorder, int graphdegree, int times) throws IOException {
 		long start;
 		// long result = 0;
 
-		System.out.println("BA "+order);
-		PrintWriter pw = new PrintWriter("choiceBA"+order+"-"+graphorder+"-"+graphdegree+".txt");
+		System.out.println("BA " + order);
+		PrintWriter pw = new PrintWriter("choiceBA" + order + "-" + graphorder + "-" + graphdegree + ".txt");
 		for (int i = 0; i < times; i++) {
 			System.out.println(i);
 			DanglingGraph g = GraphReader.barabasiAlbert(graphorder, graphdegree);
@@ -158,93 +202,108 @@ public class Test {
 			comparators.add(new RHSLengthComparator());
 			di.run();
 			pw.print((System.nanoTime() - start) / 1e9);
-			pw.print(" "+g.numberOfCalls);
-			g.numberOfCalls=0;
+			pw.print(" " + g.numberOfCalls);
+			g.numberOfCalls = 0;
 			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSTermComparator(), true));
 			start = System.nanoTime();
 			di.run();
 			pw.print(" " + (System.nanoTime() - start) / 1e9);
-			pw.print(" "+g.numberOfCalls);
-			g.numberOfCalls=0;
-			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order,new RHSTermComparator(), false));
+			pw.print(" " + g.numberOfCalls);
+			g.numberOfCalls = 0;
+			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSTermComparator(), false));
 			start = System.nanoTime();
 			di.run();
 			pw.print(" " + (System.nanoTime() - start) / 1e9);
-			pw.println(" "+g.numberOfCalls);
-			g.numberOfCalls=0;
-//			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSLengthComparator(), true));
-//			start = System.nanoTime();
-//			di.run();
-//			pw.print(" " + (System.nanoTime() - start) / 1e9);
-//			di = new DanglingInterpreter(g, tree,
-//					new SelectiveEquationManager(order, new RHSLengthComparator(), false));
-//			start = System.nanoTime();
-//			di.run();
-//			pw.print(" " + (System.nanoTime() - start) / 1e9);
-//			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new LHSLengthComparator(), true));
-//			start = System.nanoTime();
-//			di.run();
-//			pw.print(" " + (System.nanoTime() - start) / 1e9);
-//			di = new DanglingInterpreter(g, tree,
-//					new SelectiveEquationManager(order, new LHSLengthComparator(), false));
-//			start = System.nanoTime();
-//			di.run();
-//			pw.println(" " + (System.nanoTime() - start) / 1e9);
+			pw.println(" " + g.numberOfCalls);
+			g.numberOfCalls = 0;
+			// di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new
+			// RHSLengthComparator(), true));
+			// start = System.nanoTime();
+			// di.run();
+			// pw.print(" " + (System.nanoTime() - start) / 1e9);
+			// di = new DanglingInterpreter(g, tree,
+			// new SelectiveEquationManager(order, new RHSLengthComparator(), false));
+			// start = System.nanoTime();
+			// di.run();
+			// pw.print(" " + (System.nanoTime() - start) / 1e9);
+			// di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new
+			// LHSLengthComparator(), true));
+			// start = System.nanoTime();
+			// di.run();
+			// pw.print(" " + (System.nanoTime() - start) / 1e9);
+			// di = new DanglingInterpreter(g, tree,
+			// new SelectiveEquationManager(order, new LHSLengthComparator(), false));
+			// start = System.nanoTime();
+			// di.run();
+			// pw.println(" " + (System.nanoTime() - start) / 1e9);
 		}
 		pw.close();
 	}
-	public static void testTypeGeo(int order, int graphorder,double graphradius, int times) throws FileNotFoundException {
+
+	public static void quicktestTypeGeo(int order, int graphorder, int graphradius, int times)
+			throws FileNotFoundException {
 		long start;
 		// long result = 0;
-		PrintWriter pw = new PrintWriter("choiceGeo"+order+"-"+graphorder+"-"+graphradius+".txt");
-		System.out.println("Geo "+order);
+		// PrintWriter pw = new
+		// PrintWriter("choiceGeo"+order+"-"+graphorder+"-"+graphradius+".txt");
+		System.out.println("Geo " + order + " " + graphorder);
 		for (int i = 0; i < times; i++) {
 			System.out.println(i);
-			DanglingGraph g = GraphReader.geometric(graphorder, 3, graphradius);
-			// pw.println(g.size());
+			DanglingGraph g = GraphReader.ErdosRenyi(graphorder, graphradius);
+			System.out.println(1. * g.size() / graphorder);
 			g.calculateCommons(order - 2);
 			OrbitIdentification.readGraphlets("data/Przulj.txt", order);
 			OrbitTree tree;
 			tree = new OrbitTree(order - 1);
-			DanglingInterpreter di = new DanglingInterpreter(g, tree, new RandomEquationManager(order));
-			start = System.nanoTime();
-			List<Comparator<Equation>> comparators = new ArrayList<>();
-			comparators.add(new RHSTermComparator());
-			comparators.add(new RHSLengthComparator());
-			di.run();
-			pw.print((System.nanoTime() - start) / 1e9);
-			pw.print(" "+g.numberOfCalls);
-			g.numberOfCalls=0;
+			TreeInterpreter di;
 			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSTermComparator(), true));
 			start = System.nanoTime();
 			di.run();
-			pw.print(" " + (System.nanoTime() - start) / 1e9);
-			pw.print(" "+g.numberOfCalls);
-			g.numberOfCalls=0;
-			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order,new RHSTermComparator(), false));
+			System.out.print(" " + (System.nanoTime() - start) / 1e9);
+			g.numberOfCalls = 0;
+			di = new CountingInterpreter(g, order - 1, tree);
+			start = System.nanoTime();
+			long[][] result = di.run();
+			System.out.print(" " + (System.nanoTime() - start) / 1e9);
+			// tree = new OrbitTree(order);
+			g.numberOfCalls = 0;
+			di = new DanglingInterpreter(g, tree, new ActiveEquationManager(order, result));
 			start = System.nanoTime();
 			di.run();
+			System.out.print(" " + (System.nanoTime() - start) / 1e9);
+		}
+	}
+
+	public static void testTypeGeo(int order, int graphorder, double graphradius, int times)
+			throws FileNotFoundException {
+		long start;
+		// long result = 0;
+		PrintWriter pw = new PrintWriter("choiceGeo_2_" + order + "-" + graphorder + "-" + graphradius + ".txt");
+		System.out.println("Geo " + order + " " + graphorder);
+		for (int i = 0; i < times; i++) {
+			System.out.println(i);
+			DanglingGraph g = GraphReader.geometricTorus(graphorder, 3, graphradius);
+			System.out.println(1. * g.size() / graphorder/(graphorder-1)*2);
+			g.calculateCommons(order - 2);
+			OrbitIdentification.readGraphlets("data/Przulj.txt", order);
+			OrbitTree tree;
+			tree = new OrbitTree(order - 1);
+			TreeInterpreter di;
+			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSTermComparator(), true));
+			start = System.nanoTime();
+			di.run();
+			pw.print((System.nanoTime() - start) / 1e9);
+			g.numberOfCalls = 0;
+			di = new CountingInterpreter(g, order - 1, tree);
+			start = System.nanoTime();
+			long[][] result = di.run();
 			pw.print(" " + (System.nanoTime() - start) / 1e9);
-			pw.println(" "+g.numberOfCalls);
-			g.numberOfCalls=0;
-//			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSLengthComparator(), true));
-//			start = System.nanoTime();
-//			di.run();
-//			pw.print(" " + (System.nanoTime() - start) / 1e9);
-//			di = new DanglingInterpreter(g, tree,
-//					new SelectiveEquationManager(order, new RHSLengthComparator(), false));
-//			start = System.nanoTime();
-//			di.run();
-//			pw.print(" " + (System.nanoTime() - start) / 1e9);
-//			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new LHSLengthComparator(), true));
-//			start = System.nanoTime();
-//			di.run();
-//			pw.print(" " + (System.nanoTime() - start) / 1e9);
-//			di = new DanglingInterpreter(g, tree,
-//					new SelectiveEquationManager(order, new LHSLengthComparator(), false));
-//			start = System.nanoTime();
-//			di.run();
-//			pw.println(" " + (System.nanoTime() - start) / 1e9);
+			// tree = new OrbitTree(order);
+			g.numberOfCalls = 0;
+			di = new DanglingInterpreter(g, tree, new ActiveEquationManager(order, result));
+			start = System.nanoTime();
+			di.run();
+			pw.println(" " + (System.nanoTime() - start) / 1e9);
 		}
 		pw.close();
 	}
@@ -269,75 +328,44 @@ public class Test {
 	}
 
 	public static void testGraphs(int iterations) {
-//		for (int i = 100; i < 250; i+=50) {
-//			for (int j = i * 8; j < i * 13; j += i*2) {
-//				speeddifferenceER(5, iterations, i, j);
-////				speeddifferenceER(6, iterations, i, j);
-////				speeddifferenceER(7, iterations, i, j);
-//			}
-//		}
-//		for (int i = 100; i < 250; i+=50) {
-//			for (int j = 8; j < 13; j +=2) {
-//				speeddifferenceBA(5, iterations, i, j);
-////				speeddifferenceBA(6, iterations, i, j);
-////				speeddifferenceER(7, iterations, i, j);
-//			}
-//		}
-//		for (int i = 100; i < 250; i+=50) {
-////			for ( int j = 1; j < 5; j ++) {
-//			int j = 3;
-//				for (double r = 0.05; r < 0.20; r += .05) {
-//					speeddifferenceGeo(5, iterations, i, j, Math.pow(r, 1./j));
-////					speeddifferenceGeo(6, iterations, i, j, Math.pow(r, 1./j));
-////					speeddifferenceGeo(7, iterations, i, j, Math.pow(r, 1./j));
-//				}
-//			}
-////		}
-//		for (int i = 200; i < 250; i+=50) {
-//			for (int j = i * 12; j < i * 13; j += 2*i) {
-////				speeddifferenceER(5, iterations, i, j);
-//			 speeddifferenceER(6, iterations, i, j);
-////				speeddifferenceER(7, iterations, i, j);
-//			}
-//		}
-		for (int i = 150; i < 250; i+=50) {
-//			for ( int j = 1; j < 5; j +=2) {
-			int j=3;
-				for (double r = 0.05; r < 0.20; r += .05) {
-//					speeddifferenceGeo(5, iterations, i, j, Math.pow(r, 1./j));
-					if(i!=150 || r!=.05)
-					speeddifferenceGeo(6, iterations, i, j, Math.pow(r, 1./j));
-//					speeddifferenceGeo(7, iterations, i, j, Math.pow(r, 1./j));
-				}
-//			}
+		for (int i = 150; i < 250; i += 50) {
+			// for ( int j = 1; j < 5; j +=2) {
+			int j = 3;
+			for (double r = 0.05; r < 0.20; r += .05) {
+				// speeddifferenceGeo(5, iterations, i, j, Math.pow(r, 1./j));
+				if (i != 150 || r != .05)
+					speeddifferenceGeo(6, iterations, i, j, Math.pow(r, 1. / j));
+				// speeddifferenceGeo(7, iterations, i, j, Math.pow(r, 1./j));
+			}
+			// }
 		}
-		for (int i = 200; i < 250; i+=50) {
-			for (int j = 9; j < 13; j +=2) {
-//				speeddifferenceBA(5, iterations, i, j);
+		for (int i = 200; i < 250; i += 50) {
+			for (int j = 9; j < 13; j += 2) {
+				// speeddifferenceBA(5, iterations, i, j);
 				speeddifferenceBA(6, iterations, i, j);
-//				speeddifferenceER(7, iterations, i, j);
+				// speeddifferenceER(7, iterations, i, j);
 			}
 		}
-		for (int i = 100; i < 250; i+=50) {
+		for (int i = 100; i < 250; i += 50) {
 			for (int j = i * 8; j < i * 13; j += i) {
-//				speeddifferenceER(5, iterations, i, j);
-//				speeddifferenceER(6, iterations, i, j);
+				// speeddifferenceER(5, iterations, i, j);
+				// speeddifferenceER(6, iterations, i, j);
 				speeddifferenceER(7, 1, i, j);
 			}
 		}
-		for (int i = 100; i < 250; i+=50) {
-			for (int j = 8; j < 13; j ++) {
-//				speeddifferenceBA(5, iterations, i, j);
-//				speeddifferenceBA(6, iterations, i, j);
+		for (int i = 100; i < 250; i += 50) {
+			for (int j = 8; j < 13; j++) {
+				// speeddifferenceBA(5, iterations, i, j);
+				// speeddifferenceBA(6, iterations, i, j);
 				speeddifferenceER(7, 1, i, j);
 			}
 		}
-		for (int i = 100; i < 250; i+=50) {
-			for ( int j = 1; j < 5; j ++) {
+		for (int i = 100; i < 250; i += 50) {
+			for (int j = 1; j < 5; j++) {
 				for (double r = 0.05; r < 0.25; r += .05) {
-//					speeddifferenceGeo(5, iterations, i, j, Math.pow(r, 1./j));
-//					speeddifferenceGeo(6, iterations, i, j, Math.pow(r, 1./j));
-					speeddifferenceGeo(7, 1, i, j, Math.pow(r, 1./j));
+					// speeddifferenceGeo(5, iterations, i, j, Math.pow(r, 1./j));
+					// speeddifferenceGeo(6, iterations, i, j, Math.pow(r, 1./j));
+					speeddifferenceGeo(7, 1, i, j, Math.pow(r, 1. / j));
 				}
 			}
 		}
@@ -471,8 +499,8 @@ public class Test {
 			}
 
 		}
-			System.out.println(Arrays.toString(result1));
-			System.out.println(Arrays.toString(result2));
+		System.out.println(Arrays.toString(result1));
+		System.out.println(Arrays.toString(result2));
 		// System.out.println(OrbitIdentification.getNOrbitsTotal(order));
 		// g.save("copyAfter.txt");
 	}
@@ -505,17 +533,17 @@ public class Test {
 				dg.calculateCommons(order - 2);
 				DanglingInterpreter di = new DanglingInterpreter(dg, new OrbitTree(order - 1));
 				result = di.run();
-				long stop2 = System.nanoTime()-start;
+				long stop2 = System.nanoTime() - start;
 
 				// writer.print(count(result, order));
 				// writer.print("\t");
-				writer.write("" + (count(result, order) ));
+				writer.write("" + (count(result, order)));
 				writer.write("\t");
-				writer.write("" +  count(result, order - 1));
+				writer.write("" + count(result, order - 1));
 				writer.write("\t");
-				writer.write("" + ((double)stop /1e9));
+				writer.write("" + ((double) stop / 1e9));
 				writer.write("\t");
-				writer.write("" + ((double)stop2/1e9));
+				writer.write("" + ((double) stop2 / 1e9));
 				writer.write("\t" + dg.ncommon);
 				writer.write("\n");
 			}
@@ -569,17 +597,17 @@ public class Test {
 				DanglingInterpreter di = new DanglingInterpreter(dg, new OrbitTree(order - 1),
 						new EquationManager(order));
 				result = di.run();
-				long stop2 = System.nanoTime()-start;
+				long stop2 = System.nanoTime() - start;
 
 				// writer.print(count(result, order));
 				// writer.print("\t");
-				writer.write("" + (count(result, order) ));
+				writer.write("" + (count(result, order)));
 				writer.write("\t");
-				writer.write("" +  count(result, order - 1));
+				writer.write("" + count(result, order - 1));
 				writer.write("\t");
-				writer.write("" + ((double)stop /1e9));
+				writer.write("" + ((double) stop / 1e9));
 				writer.write("\t");
-				writer.write("" + ((double)stop2/1e9));
+				writer.write("" + ((double) stop2 / 1e9));
 				writer.write("\t" + dg.ncommon);
 				writer.write("\n");
 			}
@@ -629,16 +657,16 @@ public class Test {
 				dg.calculateCommons(order - 2);
 				DanglingInterpreter di = new DanglingInterpreter(dg, new OrbitTree(order - 1));
 				result = di.run();
-				long stop2=System.nanoTime()-start;
+				long stop2 = System.nanoTime() - start;
 				// writer.print(count(result, order));
 				// writer.print("\t");
-				writer.write("" + (count(result, order) ));
+				writer.write("" + (count(result, order)));
 				writer.write("\t");
-				writer.write("" +  count(result, order - 1));
+				writer.write("" + count(result, order - 1));
 				writer.write("\t");
-				writer.write("" + ((double)stop /1e9));
+				writer.write("" + ((double) stop / 1e9));
 				writer.write("\t");
-				writer.write("" + ((double)stop2/1e9));
+				writer.write("" + ((double) stop2 / 1e9));
 				writer.write("\t" + dg.ncommon);
 				writer.write("\n");
 			}

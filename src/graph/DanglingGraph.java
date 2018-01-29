@@ -53,12 +53,14 @@ public class DanglingGraph {
 	 * Adds a new node to the DanglingGraph.
 	 * @param name The node's name.
 	 */
-	public void addNode(String name) {
+	public boolean addNode(String name) {
 		if (!nodeNames.contains(name)) {
 			inverseNodeNames.put(name, nodes.size());
 			nodes.add(new DanglingList<Integer>());
 			nodeNames.add(name);
+			return true;
 		}
+		return false;
 	}
 
 	/**

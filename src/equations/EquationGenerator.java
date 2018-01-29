@@ -2,6 +2,7 @@ package equations;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.util.*;
 
 import orbits.OrbitIdentification;
@@ -97,6 +98,33 @@ public class EquationGenerator {
 			result.add(common);
 		}
 		return result;
+	}
+	
+	public static void main(String[]args) {
+		OrbitIdentification.readGraphlets(null, 6);
+		System.out.println(nrSets(4).doubleValue());
+		System.out.println(nrSets(5).doubleValue());
+		System.out.println(nrSets(6).doubleValue());
+//		System.out.println(nrSets(7));
+	}
+	
+	private static BigInteger nrSets(int order) {
+		List<Equation> l =(generateEquations(order));
+		l.sort(new EquationComparator());
+		int huidig = 0;
+		int teller = 1;
+		BigInteger result = new BigInteger("1");
+		for(Equation e:l) {
+			if(huidig!=e.getLowestOrbit()) {
+				result=result.multiply(new BigInteger(""+teller));
+				teller=1;
+				huidig = e.getLowestOrbit();
+			}else {
+				teller+=1;
+			}
+		}
+		return result;
+//		System.out.println(l);
 	}
 
 }

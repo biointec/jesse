@@ -85,6 +85,48 @@ public class Equation {
 				.equals(e.rhsOrbit));
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((lhs == null) ? 0 : lhs.hashCode());
+		result = prime * result + minus;
+		result = prime * result + ((rhsConnected == null) ? 0 : rhsConnected.hashCode());
+		result = prime * result + ((rhsOrbit == null) ? 0 : rhsOrbit.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Equation other = (Equation) obj;
+		if (lhs == null) {
+			if (other.lhs != null)
+				return false;
+		} else if (!lhs.equals(other.lhs))
+			return false;
+		if (minus != other.minus)
+			return false;
+		if (rhsConnected == null) {
+			if (other.rhsConnected != null)
+				return false;
+		} else if (!rhsConnected.equals(other.rhsConnected))
+			return false;
+		if (rhsOrbit == null) {
+			if (other.rhsOrbit != null)
+				return false;
+		} else if (!rhsOrbit.equals(other.rhsOrbit))
+			return false;
+		return true;
+	}
+
+
 	/**
 	 * Merges two equations. To do so, both equations' orbits must be equal. The
 	 * terms describing the common nodes in the right-hand side are added. If

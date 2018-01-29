@@ -119,7 +119,15 @@ public class OrbitIdentification {
 //		if (orbits == null) {
 //			readGraphlets();
 //		}
-		Integer i = newOrbitNumbers.get(g.getEdges());
+		Integer i;
+		try {
+			i = newOrbitNumbers.get(g.getEdges());
+		}
+		catch(NullPointerException e) {
+			System.out.println("pling");
+			readGraphlets(null,g.order);
+			i= newOrbitNumbers.get(g.getEdges());
+		}
 		if (i == null)
 			return -1;
 		return i;

@@ -30,17 +30,7 @@ public class SelectiveEquationManager extends EquationManager {
 	@Override
 	public void finalise() {
 		finalEquations = new Equation[OrbitIdentification.getNOrbitsForOrder(order)-1];
-		// System.out.println("ping");
 		for (int j = 0;j<equ.size();j++) {
-			// Equation e =(es.get(0));
-			// for(Equation ee:es){
-			//// if(ee.getLowestOrbit()==42)
-			//// System.out.println(ee);
-			// if(direction ==( criterion.compare(e, ee)>0)){
-			// e = ee;
-			// }
-			// }
-			// finalEquations.add(e);
 			List<Equation> currentset = new ArrayList<>(equ.get(j));
 			List<Equation> nextset = new ArrayList<>();
 			int i = 0;
