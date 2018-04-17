@@ -5,6 +5,8 @@ import java.net.URL;
 import java.util.Scanner;
 
 import equations.EquationManager;
+import equations.SelectiveEquationManager;
+import equations.RHSTermComparator;
 import graph.DanglingGraph;
 import graph.GraphReader;
 import graphletgenerating.Program;
@@ -133,7 +135,7 @@ public class UI {
 		start = System.nanoTime();
 		g.calculateCommons(order - 2);
 		System.out.println("Calculated common neighbours in " + +(System.nanoTime() - start) * 1e-9 + "s");
-		DanglingInterpreter di = new DanglingInterpreter(g,  tree,new EquationManager(order));
+		DanglingInterpreter di = new DanglingInterpreter(g,  tree,new SelectiveEquationManager(order, new RHSTermComparator(), g.density()<.7));
 		System.out.println("Counting orbits...");
 		start = System.nanoTime();
 		long[][] result = di.run();

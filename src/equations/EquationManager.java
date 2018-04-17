@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.util.*;
 
 import orbits.OrbitIdentification;
@@ -305,6 +306,27 @@ public class EquationManager {
 			}
 			System.out.println(")/"+division+";");
 		}
+	}
+	
+	public  BigInteger nrSets() {
+		BigInteger result = new BigInteger("1");
+		System.out.println(equ);
+		for(List<Equation> e:equ) {
+			for(Equation eq:e) {
+				System.out.println(eq.getLowestOrbit()+" "+eq.getRhsConnected().get(0).size()+" "+eq.getRhsConnected().size());
+			}
+		}
+		return result;
+		
+//		System.out.println(l);
+	}
+	
+	public List<Equation> getAllEquations(){
+		List<Equation> result = new ArrayList<Equation>();
+		for(List<Equation> e: equ) {
+			result.addAll(e);
+		}
+		return result;
 	}
 
 }

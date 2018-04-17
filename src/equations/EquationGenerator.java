@@ -1,13 +1,13 @@
 package equations;
 
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.util.*;
 
 import orbits.OrbitIdentification;
 import orbits.OrbitRepresentative;
-
 
 public class EquationGenerator {
 
@@ -17,8 +17,7 @@ public class EquationGenerator {
 	 * Generates all orbit representatives in graphlets of the given order.
 	 * 
 	 * @param order
-	 *            The order of which the orbit representatives must be
-	 *            calculated.
+	 *            The order of which the orbit representatives must be calculated.
 	 * @return All orbit representatives of the given order.
 	 */
 	public static Set<OrbitRepresentative> generateOrbits(int order) {
@@ -36,13 +35,12 @@ public class EquationGenerator {
 		return orbits;
 	}
 
-	
-	
-	public static /*EquationManager */ List<Equation >generateEquations(int order, Collection<OrbitRepresentative> reps) {
-//		EquationManager result = new EquationManager(order);
-		List <Equation> result = new ArrayList<>();
+	public static /* EquationManager */ List<Equation> generateEquations(int order,
+			Collection<OrbitRepresentative> reps) {
+		// EquationManager result = new EquationManager(order);
+		List<Equation> result = new ArrayList<>();
 		for (OrbitRepresentative g : reps) {
-			assert(g.order()==order-1);
+			assert (g.order() == order - 1);
 			for (List<Integer> connections : commons(g.order())) {
 				Set<OrbitRepresentative> og = g.generateNext(connections);
 				List<Integer> lhs = new ArrayList<Integer>();
@@ -51,34 +49,33 @@ public class EquationGenerator {
 					lhs.add(o.orbitSize(o.order() - 1));
 					lhsGraphlets.add(o);
 				}
-				Equation e = new Equation(lhsGraphlets, lhs, g,
-						connections);
+				Equation e = new Equation(lhsGraphlets, lhs, g, connections);
 				result.add(e);
 			}
 		}
-//		result.sortEquations();
-//		result.save("equations.txt");
-//		System.out.println(result);
+		// result.sortEquations();
+		// result.save("equations.txt");
+		// System.out.println(result);
 		return result;
 	}
-	
-//	private void save(String name)
-	
+
+	// private void save(String name)
+
 	/**
 	 * Generates all equations for counting graphlets of the given order.
 	 * 
 	 * @param order
-	 *            The order of the graphlets that can be counted with the
-	 *            resulting equations.
+	 *            The order of the graphlets that can be counted with the resulting
+	 *            equations.
 	 * @return An EquationManager containing all equations.
 	 */
-	public static List<Equation> generateEquations(int order){
-		return generateEquations(order,generateOrbits(order-1));
+	public static List<Equation> generateEquations(int order) {
+		return generateEquations(order, generateOrbits(order - 1));
 	}
 
 	/**
-	 * Generates all possible combinations from a collection of a certain size
-	 * of any number 0<n<=size elements
+	 * Generates all possible combinations from a collection of a certain size of
+	 * any number 0<n<=size elements
 	 * 
 	 * @param size
 	 *            The size of the collection of elements.
@@ -99,32 +96,89 @@ public class EquationGenerator {
 		}
 		return result;
 	}
-	
-	public static void main(String[]args) {
-		OrbitIdentification.readGraphlets(null, 6);
-		System.out.println(nrSets(4).doubleValue());
-		System.out.println(nrSets(5).doubleValue());
-		System.out.println(nrSets(6).doubleValue());
-//		System.out.println(nrSets(7));
-	}
-	
-	private static BigInteger nrSets(int order) {
-		List<Equation> l =(generateEquations(order));
-		l.sort(new EquationComparator());
-		int huidig = 0;
-		int teller = 1;
-		BigInteger result = new BigInteger("1");
-		for(Equation e:l) {
-			if(huidig!=e.getLowestOrbit()) {
-				result=result.multiply(new BigInteger(""+teller));
-				teller=1;
-				huidig = e.getLowestOrbit();
-			}else {
-				teller+=1;
+
+	public static void main(String[] args) throws FileNotFoundException {
+
+		// OrbitIdentification.readGraphlets(null,5);
+		// EquationManager em = new EquationManager(5);
+		// em.addAll(generateEquations(5));
+		// latex=true;
+		// System.out.println(em);
+		for (int i = 4; i < 8; i++) {
+//			PrintWriter pw = new PrintWriter("corr" + i + ".txt");
+			 PrintStream pw = System.out;
+			System.out.println(i);
+			OrbitIdentification.readGraphlets(null, i);
+			for (int j = 0; j < 20; j++) {
+				EquationManager em1 = new SelectiveEquationManager(i, new RHSTermComparator(), true);
+				em1.addAll(generateEquations(i));
+				EquationManager em2 = new SelectiveEquationManager(i, new RHSLengthComparator(), false);
+				em2.addAll(generateEquations(i));
+				EquationManager em3 = new RandomEquationManager(i);
+				em3.addAll(generateEquations(i));
+				EquationManager em4 = new SelectiveEquationManager(i, new RHSLengthComparator(), true);
+				em4.addAll(generateEquations(i));
+				EquationManager em5 = new SelectiveEquationManager(i, new RHSTermComparator(), false);
+				em5.addAll(generateEquations(i));
+				Equation[] a = em1.getEqu();
+				Equation[] b = em2.getEqu();
+				Equation[] c = em3.getEqu();
+				Equation[] d = em4.getEqu();
+				Equation[] e = em5.getEqu();
+				double averaga=0,averagb=0,averagc=0,averagd=0,average=0;
+				for (int k = 0; k < b.length; k++) {
+//					System.out.println(a[k]);
+//					System.out.println(b[k]);
+//					System.out.println(c[k]);
+//					System.out.println(d[k]);
+//					System.out.println(e[k]);
+//					System.out.println();
+//					System.out.println();
+//					averaga+=a[k].getRhsConnected().get(0).size();
+//					averagb+=b[k].getRhsConnected().get(0).size();
+//					averagc+=c[k].getRhsConnected().get(0).size();
+//					averagd+=d[k].getRhsConnected().get(0).size();
+//					average+=e[k].getRhsConnected().get(0).size();
+					averaga+=a[k].getRhsConnected().size();
+					averagb+=b[k].getRhsConnected().size();
+					averagc+=c[k].getRhsConnected().size();
+					averagd+=d[k].getRhsConnected().size();
+					average+=e[k].getRhsConnected().size();
+				}
+				pw.println(averaga/b.length+ "\t" + averagb/b.length+ "\t" + averagc/b.length+ "\t" + averagd/b.length+ "\t" + average/b.length);
+
 			}
+//			pw.close();
+			// double average = 0;
+			// double average2 = 0;
+			// for(int j=0;j<a.length;j++) {
+			// average+=(a[j].getRhsConnected().get(0).size()-b[j].getRhsConnected().get(0).size());
+			// average2+=(c[j].getRhsConnected().get(0).size()-d[j].getRhsConnected().get(0).size());
+			// }
+			// System.out.println(average/a.length);
+			// System.out.println(average2/a.length);
+
 		}
-		return result;
-//		System.out.println(l);
+
 	}
+
+	// private static BigInteger nrSets(int order) {
+	// List<Equation> l =(generateEquations(order));
+	// l.sort(new EquationComparator());
+	// int huidig = 0;
+	// int teller = 1;
+	// BigInteger result = new BigInteger("1");
+	// for(Equation e:l) {
+	// if(huidig!=e.getLowestOrbit()) {
+	// result=result.multiply(new BigInteger(""+teller));
+	// teller=1;
+	// huidig = e.getLowestOrbit();
+	// }else {
+	// teller+=1;
+	// }
+	// }
+	// return result;
+	//// System.out.println(l);
+	// }
 
 }

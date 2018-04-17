@@ -386,4 +386,9 @@ public class DanglingGraph {
 	public int getNodeNumber(String s) {
 		return inverseNodeNames.get(s);
 	}
+	
+	public double density() {
+		double max = (order()*(order()-1))/2;
+		return ((double)size()/max);
+	}
 }
