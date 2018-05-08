@@ -36,22 +36,31 @@ public class Test {
 
 	public static void main(String[] args) throws Exception {
 
-		OrbitIdentification.readGraphlets(null, 7);
-
-//		
-		for (int n = 200; n < 250; n += 50) {
-			for (int d = 9; d < 10; d++) {
-//				if(d<7&&n==150) continue;
-				testTypeER(5, n, n * (n - 1) / 20 * d, 20);
-				testTypeBA(5, n, (int)Math.round(n-.5-Math.sqrt((n-.5)*(n-.5)-.1*d*n*(n-1))) , 20);
-				testTypeGeo(5, n, Math.pow((.3*d)/(4*Math.PI),1./3.), 20);
-			}
-		}
+		OrbitIdentification.readGraphlets(null, 6);
+////		testFile(6, "diabetes.txt", 20);
+////		testFile(6, "affinomics.txt", 20);
+////		testFile(6, "biocreative.txt", 20);
+//		testFile(6, "cardiac.txt", 20);
+//		testFile(6, "parkinson.txt", 20);
+//		testFile(6, "synapse.txt", 20);
+		
+//
+////		
+//		for (int n = 200; n < 250; n += 50) {
+//			for (int d = 9; d < 10; d++) {
+////				if(d<7&&n==150) continue;
+//				testTypeER(5, n, n * (n - 1) / 20 * d, 20);
+//				testTypeBA(5, n, (int)Math.round(n-.5-Math.sqrt((n-.5)*(n-.5)-.1*d*n*(n-1))) , 20);
+//				testTypeGeo(5, n, Math.pow((.3*d)/(4*Math.PI),1./3.), 20);
+//			}
+//		}
 		testTypeGeo(5, 150, Math.pow((.3*9)/(4*Math.PI),1./3.), 20);
 //		for (int k = 7; k < 8; k++) {
 //			testTypeER2(k, 50, 500, 20);
 //		}
-		// 7 duurt langer dan een nacht - ruwweg 28u nodig
+//		// 7 duurt langer dan een nacht - ruwweg 28u nodig
+		
+		
 	}
 
 	public static void testLijst(int order, int graphorder, List<String> l) {
@@ -159,6 +168,46 @@ public class Test {
 			// start = System.nanoTime();
 			// di.run();
 			// pw.print(" " + (System.nanoTime() - start) / 1e9);
+
+			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSTermComparator(), true));
+			start = System.nanoTime();
+			di.run();
+			pw.print(" " + (System.nanoTime() - start) / 1e9);
+
+			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSTermComparator(), false));
+			start = System.nanoTime();
+			di.run();
+			pw.print(" " + (System.nanoTime() - start) / 1e9);
+			pw.println(" " + g.density());
+		}
+		pw.close();
+	}
+	
+	public static void testFile(int order, String filename, int times) throws IOException {
+		long start;
+		// long result = 0;
+		PrintWriter pw = new PrintWriter(new FileWriter(filename.substring(0,filename.length()-4) + order+".txt"),true);
+		System.out.println(filename +" " + order);
+
+		// PrintStream pw = System.out;
+		for (int i = 0; i < times; i++) {
+			System.out.println(i);
+			DanglingGraph g = GraphReader.readGraph(filename);
+			System.out.println(g.density());
+			g.calculateCommons(order - 2);
+			OrbitTree tree;
+			tree = new OrbitTree(order - 1);
+
+			DanglingInterpreter di = new DanglingInterpreter(g, tree, new EquationManager(order));
+			start = System.nanoTime();
+			di.run();
+			pw.print((System.nanoTime() - start) / 1e9);
+
+			di = new DanglingInterpreter(g, tree, new RandomEquationManager(order));
+			start = System.nanoTime();
+			di.run();
+			pw.print(" " + (System.nanoTime() - start) / 1e9);
+
 
 			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSTermComparator(), true));
 			start = System.nanoTime();

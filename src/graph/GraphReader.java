@@ -15,14 +15,16 @@ public class GraphReader {
 
 	public static DanglingGraph readGraph(String filename) {
 		File file = new File(filename);
+//		System.out.println(file);
 		DanglingGraph result = new DanglingGraph();
 		try {
 			Scanner scanner = new Scanner(file);
+//			System.out.println(scanner);
 			while (scanner.hasNextLine()) {
 				String s = scanner.nextLine();
 				if (!s.startsWith("#")) {
 					String[] namen = s.split("\\t");
-					if (namen.length == 2) {
+					if (namen.length >= 2) {
 						result.addEdge(namen[0], namen[1]);
 					}
 				}
@@ -31,7 +33,7 @@ public class GraphReader {
 
 			// System.out.println(nodeNames);
 		} catch (FileNotFoundException e) {
-			System.out.println("Ongeldige bestandsnaam");
+			System.out.println("Invalid file name");
 		}
 		result.finalise();
 		return result;

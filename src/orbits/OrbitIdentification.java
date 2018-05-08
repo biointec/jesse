@@ -200,5 +200,12 @@ public class OrbitIdentification {
 	public static void setTaskMonitor(TaskMonitor tm) {
 		taskMonitor = tm;
 	}
+	
+	public static void main(String[]args) {
+		readGraphlets(null,6);
+		for(OrbitRepresentative o : orbits) {
+			System.out.println(o.getEdges().size());
+		}
+	}
 
 }
