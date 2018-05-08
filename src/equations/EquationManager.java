@@ -23,9 +23,11 @@ package equations;
  */
 
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.util.*;
 
 import orbits.OrbitIdentification;
@@ -62,6 +64,17 @@ public class EquationManager {
 		// equationsByRhs = new TreeMap<OrbitRepresentative, List<Equation>>();
 	}
 
+	public static void main(String[]args) throws FileNotFoundException {
+		OrbitIdentification.readGraphlets(null, 6);
+		PrintWriter pw= new PrintWriter("data/equations.txt");
+		EquationManager em = new EquationManager(5);
+		em.addAll(EquationGenerator.generateEquations(5));
+		em.finalise();
+		pw.println(em);
+		pw.close();
+	}
+	
+	
 	public void addAll(List<Equation> e) {
 		for (Equation eq : e) {
 			addEquation(eq);
@@ -315,6 +328,27 @@ public class EquationManager {
 			}
 			System.out.println(")/"+division+";");
 		}
+	}
+	
+	public  BigInteger nrSets() {
+		BigInteger result = new BigInteger("1");
+		System.out.println(equ);
+		for(List<Equation> e:equ) {
+			for(Equation eq:e) {
+				System.out.println(eq.getLowestOrbit()+" "+eq.getRhsConnected().get(0).size()+" "+eq.getRhsConnected().size());
+			}
+		}
+		return result;
+		
+//		System.out.println(l);
+	}
+	
+	public List<Equation> getAllEquations(){
+		List<Equation> result = new ArrayList<Equation>();
+		for(List<Equation> e: equ) {
+			result.addAll(e);
+		}
+		return result;
 	}
 
 }

@@ -1,3 +1,4 @@
+
 # Jesse
 
 Tree-based algorithm to calculate graphlet densities of nodes in a graph using equations.
@@ -24,3 +25,4 @@ $ mvn clean install
 ```
 
 The resulting jar can be found in the `target` directory.
+

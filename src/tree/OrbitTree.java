@@ -125,7 +125,6 @@ public class OrbitTree {
 					if(taskMonitor!=null) {
 						taskMonitor.setProgress((double)(counter)/OrbitIdentification.getNOrbitsTotal(order));
 					}
-					System.out.println((double)(counter)/OrbitIdentification.getNOrbitsTotal(order));
 					
 					used.put(or,node1);
 					/*
@@ -218,7 +217,6 @@ public class OrbitTree {
 				if(taskMonitor!=null) {
 					taskMonitor.setProgress((double)(counter)/OrbitIdentification.getNOrbitsTotal(order));
 				}
-				System.out.println((double)(counter)/OrbitIdentification.getNOrbitsTotal(order));
 				/*
 				 * Break the OrbitRepresentative's symmetry and add the needed
 				 * ConditionNodes for the restraints.
