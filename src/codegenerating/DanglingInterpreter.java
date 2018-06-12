@@ -92,7 +92,7 @@ public class DanglingInterpreter implements TreeInterpreter {
 
 	
 	public DanglingInterpreter(DanglingGraph g, OrbitTree tree) {
-		this(g, tree, new SelectiveEquationManager(tree.getOrder()+1, new RHSTermComparator(), true));
+		this(g, tree, new SelectiveEquationManager(tree.getOrder()+1, new RHSTermComparator(), g.density()<0.7));
 	}
 
 
