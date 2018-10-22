@@ -58,8 +58,23 @@ public class Test {
 
 	public static void main(String[] args) throws Exception {
 
-		OrbitIdentification.readGraphlets(null, 6);
-////		testFile(6, "diabetes.txt", 20);
+		System.out.println("Candida");
+		System.out.println("5 nodes");
+		test("graphs/candida.txt",5);
+		System.out.println("6 nodes");
+		test("graphs/candida.txt",6);
+		System.out.println("e. Coli");
+		System.out.println("5 nodes");
+		test("graphs/ecoli.txt",5);
+		System.out.println("6 nodes");
+		test("graphs/ecoli.txt",6);
+		System.out.println("Human");
+		System.out.println("5 nodes");
+		test("graphs/human.txt",5);
+		System.out.println("6 nodes");
+		test("graphs/human.txt",6);
+//		OrbitIdentification.readGraphlets(null, 6);
+//		testFile(6, "diabetes.txt", 20);
 ////		testFile(6, "affinomics.txt", 20);
 ////		testFile(6, "biocreative.txt", 20);
 //		testFile(6, "cardiac.txt", 20);
@@ -76,7 +91,7 @@ public class Test {
 //				testTypeGeo(5, n, Math.pow((.3*d)/(4*Math.PI),1./3.), 20);
 //			}
 //		}
-		testTypeGeo(5, 150, Math.pow((.3*9)/(4*Math.PI),1./3.), 20);
+//		testTypeGeo(5, 150, Math.pow((.3*9)/(4*Math.PI),1./3.), 20);
 //		for (int k = 7; k < 8; k++) {
 //			testTypeER2(k, 50, 500, 20);
 //		}
@@ -209,9 +224,9 @@ public class Test {
 		long start;
 		// long result = 0;
 		PrintWriter pw = new PrintWriter(new FileWriter(filename.substring(0,filename.length()-4) + order+".txt"),true);
-		System.out.println(filename +" " + order);
+//		System.out.println(filename +" " + order);
 
-		// PrintStream pw = System.out;
+//		 PrintStream pw = System.out;
 		for (int i = 0; i < times; i++) {
 			System.out.println(i);
 			DanglingGraph g = GraphReader.readGraph(filename);
@@ -575,6 +590,7 @@ public class Test {
 
 		// g.save("copyBefore.txt");
 		System.out.println(g.order() + "," + g.size());
+		System.out.println(g.density());
 		start = System.nanoTime();
 		g.calculateCommons(order - 2);
 		System.out.print((System.nanoTime() - start) * 1e-9 + "\t");
