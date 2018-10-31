@@ -155,7 +155,7 @@ public class UI {
 		System.out.println("Read graph in " + (System.nanoTime() - start) * 1e-9 + "s");
 		System.out.println("Calculating common neighbours...");
 		start = System.nanoTime();
-		g.calculateCommons(order - 2);
+		g.calculateCommonsTrie(order - 2);
 		System.out.println("Calculated common neighbours in " + +(System.nanoTime() - start) * 1e-9 + "s");
 		DanglingInterpreter di = new DanglingInterpreter(g,  tree,new SelectiveEquationManager(order, new RHSTermComparator(), g.density()<.7));
 		System.out.println("Counting orbits...");

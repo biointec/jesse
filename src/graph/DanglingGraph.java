@@ -32,6 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import trie.IntTrie;
+import trie.Trie;
+import trie.TrieElement;
+
 /**
  * Class that represents a graph using DanglingLists. For each node, a sorted
  * DanglingList of integers is kept, which correspond to the neighbours of that
@@ -41,16 +45,18 @@ import java.util.Stack;
  *
  */
 public class DanglingGraph {
-	
+
 	public long numberOfCalls = 0;
+	public boolean useMap = true;
 
 	private List<DanglingList<Integer>> nodes;
 	private List<String> nodeNames;
 	private Map<String, Integer> inverseNodeNames;
-//	 private Map<DanglingList<Integer>, Integer> nCommon;
+	// private Map<DanglingList<Integer>, Integer> nCommon;
 
-	private Map<Long, Integer> nCommon;
-	private List<Map<DanglingList<Integer>,Integer>> commonsBySize;
+	// private Map<Long, Integer> nCommon;
+	private List<Map<DanglingList<Integer>, Integer>> commonsBySize;
+	private Trie<Integer, Integer> commonsTrie;
 	private long[] sizes;
 	private boolean[][] matrix;
 	private int size;
@@ -66,14 +72,17 @@ public class DanglingGraph {
 		nodes = new ArrayList<DanglingList<Integer>>();
 		inverseNodeNames = new HashMap<String, Integer>();
 		matrix = null;
-		nCommon = null;
+		// nCommon = null;
 		commonsBySize = null;
-//		nCommon = null;
+		commonsTrie = null;
+		// nCommon = null;
 	}
 
 	/**
 	 * Adds a new node to the DanglingGraph.
-	 * @param name The node's name.
+	 * 
+	 * @param name
+	 *            The node's name.
 	 */
 	public boolean addNode(String name) {
 		if (!nodeNames.contains(name)) {
@@ -86,9 +95,14 @@ public class DanglingGraph {
 	}
 
 	/**
-	 * Adds a new edge to the DanglingGraph between the two given nodes, specified by name. If either node is not in the graph, it is added to the graph as well. 
-	 * @param node1 Name of first node
-	 * @param node2 Name of second node
+	 * Adds a new edge to the DanglingGraph between the two given nodes, specified
+	 * by name. If either node is not in the graph, it is added to the graph as
+	 * well.
+	 * 
+	 * @param node1
+	 *            Name of first node
+	 * @param node2
+	 *            Name of second node
 	 */
 	public void addEdge(String node1, String node2) {
 		int n1;
@@ -105,15 +119,20 @@ public class DanglingGraph {
 			n2 = nodes.size();
 			addNode(node2);
 		}
-		addEdge(n1,n2);
+		addEdge(n1, n2);
 	}
-	
+
 	/**
-	 * Adds a new edge to the graph, between the two nodes specified by the given indices. Throws a NullPointerException if these indices are greater than the number of nodes in the graph.
-	 * @param n1 Index of first node.
-	 * @param n2 Index of second node.
+	 * Adds a new edge to the graph, between the two nodes specified by the given
+	 * indices. Throws a NullPointerException if these indices are greater than the
+	 * number of nodes in the graph.
+	 * 
+	 * @param n1
+	 *            Index of first node.
+	 * @param n2
+	 *            Index of second node.
 	 */
-	public void addEdge(int n1, int n2){
+	public void addEdge(int n1, int n2) {
 
 		nodes.get(n1).addInOrder(n2);
 		nodes.get(n2).addInOrder(n1);
@@ -121,7 +140,8 @@ public class DanglingGraph {
 	}
 
 	/**
-	 * Creates the matrix representation of this graph, to allow for easier lookup of adjacency. Should be executed after every
+	 * Creates the matrix representation of this graph, to allow for easier lookup
+	 * of adjacency. Should be executed after every
 	 */
 	public void finalise() {
 		// System.out.println(nodes);
@@ -140,16 +160,6 @@ public class DanglingGraph {
 		DanglingList.setFactor(order());
 	}
 
-	public static void main(String[] args) {
-		DanglingGraph g = new DanglingGraph();
-		g.addNode("a");
-		g.addNode("b");
-		g.addEdge("b", "a");
-		g.addNode("c");
-		g.addEdge("c", "b");
-		g.finalise();
-		g.printMatrix();
-	}
 
 	/**
 	 * Prints this graph's matrix representation to the console.
@@ -159,8 +169,6 @@ public class DanglingGraph {
 			System.out.println(Arrays.toString(a));
 		}
 	}
-
-	
 
 	public int size() {
 		return size;
@@ -175,30 +183,118 @@ public class DanglingGraph {
 		return result;
 	}
 
+	public void calculateCommons(int size) {
+		if(useMap) {
+			calculateCommonsMap(size);
+		}else {
+			calculateCommonsTrie(size);
+		}
+	}
+	
 	/**
-	 * Calculates the number of common neighbours of all sets of nodes of up to
-	 * the given cardinality.
+	 * Calculates the number of common neighbours of all sets of nodes of up to the
+	 * given cardinality.
 	 * 
 	 * @param size
 	 */
-	public void calculateCommons(int size) {
+	private void calculateCommonsTrie(int size) {
 
-		// long number = 1;
-		// for(long i=0;i<size;i++){
-		// number*=(order()-i);
-		// number/=(i+1);
-		// System.out.println(number);
-		// }
-		// // int mapsize = (int) number;
-//		 nCommon = new HashMap<DanglingList<Integer>, Integer>(39174100);
-		nCommon = new HashMap<Long, Integer>();
-		commonsBySize = new ArrayList<Map<DanglingList<Integer>,Integer>>();
+		// commonsBySize = new ArrayList<Map<DanglingList<Integer>,Integer>>();
+//		commonsTrie = new IntTrie(order());
+		commonsTrie = new Trie<Integer, Integer>();
 		//
-		int[][]distance = floydWarshall();
+		int[][] distance = floydWarshall();
 		sizes = new long[size + 1];
 		for (int i = 1; i <= size; i++) {
 			sizes[i] += sizes[i - 1] + combination(nodes.size(), i);
-			commonsBySize.add(new HashMap<DanglingList<Integer>,Integer>());
+			// commonsBySize.add(new HashMap<DanglingList<Integer>,Integer>());
+		}
+		int[] counters = new int[size];
+		int index = 0;
+		for (int i = 0; i < size; i++) {
+			counters[i] = -1;
+		}
+		int[] numbers = new int[size];
+		Stack<DanglingElement<Integer>> removed = new Stack<>();
+		DanglingList<Integer> elements = new DanglingList<>();
+		TrieElement<Integer, Integer> t = commonsTrie.getRoot();
+		outer: while (counters[0] < nodes.size() - 1 || index != 0) {
+//			System.out.println(Arrays.toString(counters));
+			counters[index]++;
+			if (counters[index] >= nodes.size()) {
+				for (int i = 0; i < numbers[index - 1]; i++) {
+					elements.restore(removed.pop());
+				}
+				numbers[index - 1] = 0;
+				counters[index] = 0;
+				index--;
+				t = t.getParent();
+			} else {
+
+				if (index == 0) {
+					elements = nodes.get(counters[0]);
+					DanglingList<Integer> l = new DanglingList<Integer>();
+					l.add(counters[0]);
+					// nCommon.put(l, nodes.get(counters[0]).size());
+					// nCommon.put(l.longHashCode(), nodes.get(counters[0]).size());
+					// commonsBySize.get(index).put(new DanglingList<Integer>(l),
+					// nodes.get(counters[0]).size());
+					t = t.addChild(counters[0], nodes.get(counters[0]).size());
+					if (size > 1) {
+						counters[1] = counters[0];
+						index = 1;
+					}
+				} else if (index == size - 1) {
+					for (int i = 0; i < index; i++) {
+						if (distance[counters[i]][counters[index]] > 2) {
+							continue outer;
+						}
+					}
+					Stack<DanglingElement<Integer>> rest = elements.crossSection(nodes.get(counters[index]));
+					if (!elements.isEmpty()) {
+						DanglingList<Integer> l = new DanglingList<Integer>();
+						for (int i = 0; i < size; i++) {
+							l.add(counters[i]);
+						}
+						// nCommon.put(l, elements.size());
+						// commonsBySize.get(index).put(new DanglingList<Integer>(l), elements.size());
+						t.addChild(counters[index], elements.size());
+
+					}
+					while (!rest.isEmpty()) {
+						elements.restore(rest.pop());
+					}
+				} else {
+					Stack<DanglingElement<Integer>> rest = elements.crossSection(nodes.get(counters[index]));
+					int x = elements.size();
+					if (x != 0) {
+						numbers[index] = rest.size();
+						removed.addAll(rest);
+						DanglingList<Integer> l = new DanglingList<Integer>();
+						for (int i = 0; i < index + 1; i++) {
+							l.add(counters[i]);
+						}
+						t = t.addChild(counters[index], elements.size());
+						index++;
+						counters[index] = counters[index - 1];
+					} else {
+						while (!rest.isEmpty()) {
+							elements.restore(rest.pop());
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private void calculateCommonsMap(int size) {
+
+		commonsBySize = new ArrayList<Map<DanglingList<Integer>, Integer>>();
+		int[][] distance = floydWarshall();
+		sizes = new long[size + 1];
+		for (int i = 1; i <= size; i++) {
+			sizes[i] += sizes[i - 1] + combination(nodes.size(), i);
+			commonsBySize.add(new HashMap<DanglingList<Integer>, Integer>());
 		}
 		int[] counters = new int[size];
 		int index = 0;
@@ -223,17 +319,14 @@ public class DanglingGraph {
 					elements = nodes.get(counters[0]);
 					DanglingList<Integer> l = new DanglingList<Integer>();
 					l.add(counters[0]);
-//					nCommon.put(l, nodes.get(counters[0]).size());
-					nCommon.put(l.longHashCode(), nodes.get(counters[0]).size());
 					commonsBySize.get(index).put(new DanglingList<Integer>(l), nodes.get(counters[0]).size());
-
 					if (size > 1) {
 						counters[1] = counters[0];
 						index = 1;
 					}
 				} else if (index == size - 1) {
-					for(int i=0;i<index;i++){
-						if(distance[counters[i]][counters[index]] > size + 2){
+					for (int i = 0; i < index; i++) {
+						if (distance[counters[i]][counters[index]] > 2) {
 							continue outer;
 						}
 					}
@@ -243,7 +336,6 @@ public class DanglingGraph {
 						for (int i = 0; i < size; i++) {
 							l.add(counters[i]);
 						}
-						nCommon.put(l.longHashCode(), elements.size());
 						commonsBySize.get(index).put(new DanglingList<Integer>(l), elements.size());
 
 					}
@@ -260,10 +352,7 @@ public class DanglingGraph {
 						for (int i = 0; i < index + 1; i++) {
 							l.add(counters[i]);
 						}
-//						nCommon.put(l, elements.size());
-						nCommon.put(l.longHashCode(), elements.size());
 						commonsBySize.get(index).put(new DanglingList<Integer>(l), elements.size());
-
 						index++;
 						counters[index] = counters[index - 1];
 					} else {
@@ -320,11 +409,20 @@ public class DanglingGraph {
 	 */
 	public int getNCommon(DanglingList<Integer> l) {
 		numberOfCalls++;
-		if(l.size()==0) return 0;
-		if(l.size()==1) return nodes.get(l.getHead().getValue()).size();
-//		Integer a = nCommon.get(l);
-		Integer a = nCommon.get(l.longHashCode());
-//		Integer a = commonsBySize.get(l.size()-1).get(l);
+		if (l.size() == 0)
+			return 0;
+		if (l.size() == 1)
+			return nodes.get(l.getHead().getValue()).size();
+		Integer a;
+		// Integer a = nCommon.get(l);
+		// Integer a = nCommon.get(l.longHashCode());
+		if (useMap) {
+			a = commonsBySize.get(l.size() - 1).get(l);
+		} else {
+			a = commonsTrie.search(l);
+		}
+		// if((a==null && b!=null)||(a!= null &&!a.equals(b)))System.out.println(a+"
+		// "+b+" "+l);
 		return a == null ? 0 : a;
 		// return 0;
 	}
@@ -345,7 +443,7 @@ public class DanglingGraph {
 	 * 
 	 * @return A 2-dimensional array containing the distances.
 	 */
-	public int[][] floydWarshall() {
+	private int[][] floydWarshall() {
 		int order = order();
 		int[][] result = new int[order][order];
 		for (int i = 0; i < order; i++) {
@@ -404,13 +502,13 @@ public class DanglingGraph {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public int getNodeNumber(String s) {
 		return inverseNodeNames.get(s);
 	}
-	
+
 	public double density() {
-		double max = (order()*(order()-1))/2;
-		return ((double)size()/max);
+		double max = (order() * (order() - 1)) / 2;
+		return ((double) size() / max);
 	}
 }

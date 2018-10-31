@@ -185,10 +185,14 @@ public class Equation {
 
 			}
 			result = result.substring(0, result.length() - 2);
-			result += "= \\sum\\limits_{P_{";
+			result += "= \\sum\\limits_{x";
+			for (int i = 0; i < rhsOrbit.order() - 1; i++) {
+				result += "," + (char) ('t' + i);
+			}
+			result+=":P_{";
 			result += OrbitIdentification.identifyOrbit(rhsOrbit) + "} (x";
 			for (int i = 0; i < rhsOrbit.order() - 1; i++) {
-				result += "," + (char) ('a' + i);
+				result += "," + (char) ('t' + i);
 			}
 			result += ")} ";
 			for (int i = 0; i < rhsConnected.size(); i++) {
@@ -270,7 +274,7 @@ public class Equation {
 		result += "c( ";
 		for (int i = 0; i < connect.size(); i++) {
 			result += connect.get(i) == 0 ? "x"
-					: (char) (connect.get(i) + 'a' - 1);
+					: (char) (connect.get(i) + 't' - 1);
 			result += ", ";
 		}
 		for (int i = 0; i < g.order(); i++) {

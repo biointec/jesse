@@ -66,7 +66,8 @@ public class EquationManager {
 
 	public static void main(String[]args) throws FileNotFoundException {
 		OrbitIdentification.readGraphlets(null, 6);
-		PrintWriter pw= new PrintWriter("data/equations.txt");
+		PrintWriter pw= new PrintWriter("data/equations.tex");
+		EquationGenerator.latex=true;
 		EquationManager em = new EquationManager(5);
 		em.addAll(EquationGenerator.generateEquations(5));
 		em.finalise();
