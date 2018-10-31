@@ -1,5 +1,7 @@
 package equations;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 /*
  * #%L
  * Jesse
@@ -22,6 +24,7 @@ package equations;
  * #L%
  */
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
 
@@ -38,9 +41,13 @@ public class RandomEquationManager extends EquationManager {
 		// System.out.println("ping1");
 		finalEquations =new Equation[OrbitIdentification.getNOrbitsForOrder(order)-1];
 		Random r = new Random();
+		List<List<Equation>> newEqu = new ArrayList<>();
 		for (int i=0;i<equ.size();i++) {
 			finalEquations[i]=(equ.get(i).get(r.nextInt(equ.get(i).size())));
+			newEqu.add(new ArrayList<>());
+			newEqu.get(i).add(finalEquations[i]);
 		}
+		equ = newEqu;
 		equationsByRhs = new TreeMap<>();
 		for (Equation e : finalEquations) {
 			// Equation e = equ[i];
@@ -52,5 +59,16 @@ public class RandomEquationManager extends EquationManager {
 			equationsByRhs.get(n).add(e);
 		}
 		// System.out.println(finalEquations);
+	}
+	
+	public static void main(String[]args) throws FileNotFoundException {
+		OrbitIdentification.readGraphlets(null, 6);
+		PrintWriter pw= new PrintWriter("data/equations-2.tex");
+		EquationGenerator.latex=true;
+		EquationManager em = new RandomEquationManager(5);
+		em.addAll(EquationGenerator.generateEquations(5));
+		em.finalise();
+		pw.println(em);
+		pw.close();
 	}
 }

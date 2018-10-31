@@ -1,4 +1,4 @@
-package codegenerating;
+package Test;
 
 /*
  * #%L
@@ -40,6 +40,10 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
+import codegenerating.CountingInterpreter;
+import codegenerating.DanglingInterpreter;
+import codegenerating.NegativeCountException;
+import codegenerating.TreeInterpreter;
 import equations.ActiveEquationManager;
 import equations.Equation;
 import equations.EquationComparator;
@@ -56,49 +60,22 @@ import tree.OrbitTree;
 
 public class Test {
 
+	static int counter = 0;
 	public static void main(String[] args) throws Exception {
-
-		System.out.println("Candida");
-		System.out.println("5 nodes");
-		test("graphs/candida.txt",5);
-		System.out.println("6 nodes");
-		test("graphs/candida.txt",6);
-		System.out.println("e. Coli");
-		System.out.println("5 nodes");
-		test("graphs/ecoli.txt",5);
-		System.out.println("6 nodes");
-		test("graphs/ecoli.txt",6);
-		System.out.println("Human");
-		System.out.println("5 nodes");
-		test("graphs/human.txt",5);
-		System.out.println("6 nodes");
-		test("graphs/human.txt",6);
-//		OrbitIdentification.readGraphlets(null, 6);
-//		testFile(6, "diabetes.txt", 20);
-////		testFile(6, "affinomics.txt", 20);
-////		testFile(6, "biocreative.txt", 20);
-//		testFile(6, "cardiac.txt", 20);
-//		testFile(6, "parkinson.txt", 20);
-//		testFile(6, "synapse.txt", 20);
-		
-//
-////		
-//		for (int n = 200; n < 250; n += 50) {
-//			for (int d = 9; d < 10; d++) {
-////				if(d<7&&n==150) continue;
-//				testTypeER(5, n, n * (n - 1) / 20 * d, 20);
-//				testTypeBA(5, n, (int)Math.round(n-.5-Math.sqrt((n-.5)*(n-.5)-.1*d*n*(n-1))) , 20);
-//				testTypeGeo(5, n, Math.pow((.3*d)/(4*Math.PI),1./3.), 20);
-//			}
-//		}
-//		testTypeGeo(5, 150, Math.pow((.3*9)/(4*Math.PI),1./3.), 20);
-//		for (int k = 7; k < 8; k++) {
-//			testTypeER2(k, 50, 500, 20);
-//		}
-//		// 7 duurt langer dan een nacht - ruwweg 28u nodig
-		
-		
+		int x = 0;
+		if(args.length>0) {
+			x = Integer.parseInt(args[0]);
+		}
+//		System.out.println("test");
+//		test("graphs/test.txt",5);
+		String[]names = {"candida","ecoli","human"};
+		for(int i=x;i<6;i++) {
+			System.out.println(names[i/2]+" "+(i%2+5)+" nodes");
+			test("graphs/"+names[i/2]+".txt", (i%2+5));
+			System.out.println();
+		}
 	}
+
 
 	public static void testLijst(int order, int graphorder, List<String> l) {
 		DanglingGraph g = GraphReader.ErdosRenyi(graphorder, graphorder / 10);
@@ -184,7 +161,7 @@ public class Test {
 		for (int i = 0; i < times; i++) {
 			System.out.println(i);
 			DanglingGraph g = GraphReader.ErdosRenyi(graphorder, graphsize);
-//			System.out.println(g.density());
+			// System.out.println(g.density());
 			g.calculateCommons(order - 2);
 			OrbitTree tree;
 			tree = new OrbitTree(order - 1);
@@ -219,12 +196,14 @@ public class Test {
 		}
 		pw.close();
 	}
-	
+
 	public static void testFile(int order, String filename, int times) throws IOException {
 		long start;
 		// long result = 0;
-		PrintWriter pw = new PrintWriter(new FileWriter(filename.substring(0,filename.length()-4) + order+".txt"),true);
-//		System.out.println(filename +" " + order);
+
+		PrintWriter pw = new PrintWriter(new FileWriter(filename.substring(0, filename.length() - 4) + order + ".txt"),
+				true);
+		System.out.println(filename + " " + order);
 
 //		 PrintStream pw = System.out;
 		for (int i = 0; i < times; i++) {
@@ -244,7 +223,6 @@ public class Test {
 			start = System.nanoTime();
 			di.run();
 			pw.print(" " + (System.nanoTime() - start) / 1e9);
-
 
 			di = new DanglingInterpreter(g, tree, new SelectiveEquationManager(order, new RHSTermComparator(), true));
 			start = System.nanoTime();
@@ -270,7 +248,7 @@ public class Test {
 		for (int i = 0; i < times; i++) {
 			System.out.println(i);
 			DanglingGraph g = GraphReader.ErdosRenyi(graphorder, graphsize);
-//			System.out.println(g.density());
+			// System.out.println(g.density());
 			g.calculateCommons(order - 2);
 			OrbitTree tree;
 			tree = new OrbitTree(order - 1);
@@ -314,7 +292,7 @@ public class Test {
 		for (int i = 0; i < times; i++) {
 			System.out.println(i);
 			DanglingGraph g = GraphReader.barabasiAlbert(graphorder, graphdegree);
-//			System.out.println(g.density());
+			// System.out.println(g.density());
 			g.calculateCommons(order - 2);
 			OrbitTree tree;
 			tree = new OrbitTree(order - 1);
@@ -389,12 +367,13 @@ public class Test {
 			throws FileNotFoundException {
 		long start;
 		// long result = 0;
-		PrintWriter pw = new PrintWriter("Geo" + order + "-" + graphorder + "-" + (""+graphradius).substring(6) + ".txt");
+		PrintWriter pw = new PrintWriter(
+				"Geo" + order + "-" + graphorder + "-" + ("" + graphradius).substring(6) + ".txt");
 		System.out.println("Geo " + order + " " + graphorder);
 		for (int i = 0; i < times; i++) {
 			System.out.println(i);
 			DanglingGraph g = GraphReader.geometricTorus(graphorder, 3, graphradius);
-//			System.out.println(g.density());
+			// System.out.println(g.density());
 			g.calculateCommons(order - 2);
 			OrbitTree tree;
 			tree = new OrbitTree(order - 1);
@@ -591,6 +570,7 @@ public class Test {
 		// g.save("copyBefore.txt");
 		System.out.println(g.order() + "," + g.size());
 		System.out.println(g.density());
+		System.out.println("commons\tinterpreter\trun");
 		start = System.nanoTime();
 		g.calculateCommons(order - 2);
 		System.out.print((System.nanoTime() - start) * 1e-9 + "\t");
@@ -604,28 +584,34 @@ public class Test {
 		start = System.nanoTime();
 		long[][] result = di.run();
 		long[] result1 = result[0];
-		start = System.nanoTime();
-		tree = new OrbitTree(order);
-		CountingInterpreter ci = new CountingInterpreter(g, order, tree);
 		System.out.print((System.nanoTime() - start) * 1e-9 + "\t");
-		start = System.nanoTime();
-		result = ci.run();
-		System.out.println((System.nanoTime() - start) * 1e-9 + "\t");
-		// tree.print();
-		long[] result2 = result[0];
-		if (!Arrays.equals(result1, result2)) {
-
-			for (int i = 0; i < result1.length; i++) {
-				if (result1[i] != result2[i]) {
-					System.out.println(i);
-				}
-			}
-
+		PrintWriter pw = new PrintWriter("results/test"+counter++ +".txt");
+		for(long[] l :result) {
+			pw.println(Arrays.toString(l));
 		}
-		System.out.println(Arrays.toString(result1));
-		System.out.println(Arrays.toString(result2));
+//		start = System.nanoTime();
+//		tree = new OrbitTree(order);
+//		CountingInterpreter ci = new CountingInterpreter(g, order, tree);
+//		System.out.print((System.nanoTime() - start) * 1e-9 + "\t");
+//		start = System.nanoTime();
+//		result = ci.run();
+//		System.out.println((System.nanoTime() - start) * 1e-9 + "\t");
+//		// tree.print();
+//		long[] result2 = result[0];
+//		if (!Arrays.equals(result1, result2)) {
+//
+//			for (int i = 0; i < result1.length; i++) {
+//				if (result1[i] != result2[i]) {
+//					System.out.println(i);
+//				}
+//			}
+//
+//		}
+//		System.out.println(Arrays.toString(result1));
+//		System.out.println(Arrays.toString(result2));
 		// System.out.println(OrbitIdentification.getNOrbitsTotal(order));
 		// g.save("copyAfter.txt");
+		System.out.println();
 	}
 	// tree.getRoot().printTree("");
 
