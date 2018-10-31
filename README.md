@@ -4,7 +4,7 @@
 Tree-based algorithm to calculate graphlet densities of nodes in a graph using equations.
 
 ## Usage
-Command-line use: `java -jar jesse-1.0.0.jar`
+Command-line use: `java -jar jesse-1.1.0.jar`
 
 In the command line, Jesse will then ask for the maximal graphlet size and needed files to count the orbits (either the included standard files or newly generated files), a graph file and a file to save the results. 
 
