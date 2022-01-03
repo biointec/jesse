@@ -65,7 +65,7 @@ public class UI {
 			System.out.println("Do you want to save the orbits? (y/n)");
 			saveorbits = s.next().toLowerCase().charAt(0) == 'y';
 			if (saveorbits) {
-				System.out.println("Enter the file name for the orbit numbering:");
+				System.out.println("Enter the file name for where to generate the orbit numbering:");
 				orbitname = s.next();
 			} else
 				orbitname = "temp.txt";
@@ -122,6 +122,7 @@ public class UI {
 			start = System.nanoTime();
 			try {
 				Program.generateGraphlets(order, orbitname);
+				orbitname = orbitname + ".txt";
 			} catch (IOException e) {
 				System.out.println("Could not save graphlets.");
 				return;
